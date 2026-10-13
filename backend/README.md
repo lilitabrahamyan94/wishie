@@ -1,6 +1,6 @@
 # Product lookup backend
 
-A small Cloudflare Worker. The Wishlist page sends it a product link and gets back the
+A small Cloudflare Worker. The wishie page sends it a product link and gets back the
 product's name, photos, price and stock, read from the data shops publish for search engines.
 
     GET /product?url=https://shop.example.com/some-product
