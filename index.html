@@ -7,6 +7,11 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script>
+(function(){
+  try{ var t = localStorage.getItem("wishie-theme"); if(t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); }catch(e){}
+})();
+</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400&display=swap">
 <style>
 :root{
@@ -28,6 +33,9 @@
   --plate:#252D3C; --in:#7FD6AE; --in-bg:#173A2C; --out:#F0A29C; --out-bg:#452221;
   --low:#EBC66A; --low-bg:#43361A; --unk:#B4BCCB; --unk-bg:#2A3140; --focus:#8FA6FF; --accent:#4F6BEB; --on-accent:#FFFFFF;
 }
+:root{color-scheme:light dark}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--paper);color:var(--ink);
@@ -220,6 +228,55 @@ body{display:flex;flex-direction:column;min-height:100vh}
   text-decoration:none;cursor:pointer}
 .top .pop a:hover,.pop button:hover{background:var(--plate)}
 @media (max-width:760px){.pbtn{padding:0 7px;gap:6px;font-size:14px}}
+.top .profile{display:flex;align-items:center;gap:2px}
+.tbtn{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:8px;background:none;
+  color:var(--muted);cursor:pointer}
+.tbtn:hover{color:var(--ink);background:var(--plate)}
+.tbtn .sun{display:none}
+:root[data-theme="dark"] .tbtn .sun{display:block}
+:root[data-theme="dark"] .tbtn .moon{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .tbtn .sun{display:block}
+  :root:not([data-theme="light"]) .tbtn .moon{display:none}
+}
+@media (max-width:760px){.tbtn{width:40px}}
+.bell{position:relative}
+.bell[aria-expanded="true"]{color:var(--ink);background:var(--plate)}
+.nbadge{position:absolute;top:7px;left:calc(50% + 2px);min-width:14px;height:14px;padding:0 3px;border-radius:99px;
+  background:var(--out);color:var(--paper);border:2px solid var(--paper);box-sizing:content-box;
+  font-size:9px;font-weight:700;line-height:14px;text-align:center;font-variant-numeric:tabular-nums}
+.nbadge[hidden]{display:none}
+.nscrim{position:fixed;inset:0;z-index:50;background:rgba(10,14,22,.4);opacity:0;transition:opacity .25s}
+.ndrawer{position:fixed;top:0;right:0;bottom:0;z-index:51;width:min(400px,100vw);display:flex;flex-direction:column;
+  background:var(--surface);border-left:1px solid var(--line);box-shadow:-12px 0 32px rgba(0,0,0,.16);
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nscrim[hidden],.ndrawer[hidden]{display:none}
+body.notif-open{overflow:hidden}
+body.notif-open .nscrim{opacity:1}
+body.notif-open .ndrawer{transform:none}
+.nhead{display:flex;align-items:center;gap:4px;padding:8px 8px 8px 20px;border-bottom:1px solid var(--line)}
+.nhead h2{margin:0 auto 0 0;font-size:18px}
+.nread{min-height:44px;padding:0 10px;border:0;border-radius:8px;background:none;color:var(--accent);
+  font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.nread:hover{background:var(--plate)}
+.nread:disabled{color:var(--muted);cursor:default;background:none}
+.nlist{list-style:none;margin:0;padding:6px 0;overflow-y:auto;flex:1}
+.nitem a{position:relative;display:flex;gap:14px;padding:14px 20px 14px 24px;color:var(--ink);text-decoration:none}
+.nitem a:hover{background:var(--plate)}
+.nitem.unread a::before{content:"";position:absolute;left:9px;top:22px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.nitem img{flex:none;width:56px;height:70px;object-fit:cover;border-radius:6px;background:var(--plate)}
+.nitem.is-out img{opacity:.55}
+.ntext{min-width:0;display:flex;flex-direction:column;gap:3px}
+.ntag{align-self:flex-start;padding:1px 8px;border-radius:4px;font-size:12px;font-weight:600}
+.ntag.drop{background:var(--in-bg);color:var(--in)}
+.ntag.out{background:var(--out-bg);color:var(--out)}
+.nname{font-weight:600;line-height:1.3}
+.nmsg{color:var(--muted);font-size:14px}
+.nmsg b{color:var(--ink);font-weight:600}
+.ntime{color:var(--muted);font-size:12px}
+.nfoot{margin:0;padding:12px 20px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){.nscrim,.ndrawer{transition:none}}
 @media (max-width:760px){
   .top{grid-template-columns:1fr auto;grid-template-areas:"logo profile" "menu menu"}
   .top a.logo{grid-area:logo}
@@ -371,6 +428,14 @@ body{display:flex;flex-direction:column;min-height:100vh}
     <a href="#coupons" id="nav-coupons">Coupons</a>
   </div>
   <div class="profile">
+    <button type="button" class="tbtn" id="theme-toggle" aria-label="Switch to dark mode">
+      <svg class="moon" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M15 10.6A6.300 6.300 0 0 1 7.400 3 6.300 6.300 0 1 0 15 10.600z" fill="currentColor"/></svg>
+      <svg class="sun" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="3.400" fill="currentColor"/><g stroke="currentColor" stroke-width="1.600" stroke-linecap="round"><path d="M9 1.500v1.800M9 14.700v1.800M1.500 9h1.800M14.700 9h1.800M3.700 3.700l1.300 1.300M13 13l1.300 1.300M3.700 14.300 5 13M13 5l1.300-1.300"/></g></svg>
+    </button>
+    <button type="button" class="tbtn bell" id="notif-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="notif-drawer" aria-label="Notifications">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 1.800a5 5 0 0 0-5 5v2.700L2.600 12.300a.7.7 0 0 0 .6 1.100h11.600a.7.7 0 0 0 .6-1.100L14 9.500V6.800a5 5 0 0 0-5-5z" fill="currentColor"/><path d="M6.900 14.600a2.100 2.100 0 0 0 4.200 0z" fill="currentColor"/></svg>
+      <span class="nbadge" id="notif-count" hidden></span>
+    </button>
     <button type="button" class="pbtn" id="nav-profile" aria-haspopup="true" aria-expanded="false" aria-controls="profile-menu">
       <span class="avatar" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6.5" r="3" fill="currentColor"/><path d="M3 15.5c.6-3 3-4.5 6-4.5s5.400 1.500 6 4.500z" fill="currentColor"/></svg></span>
       <span>Profile</span>
@@ -382,6 +447,18 @@ body{display:flex;flex-direction:column;min-height:100vh}
     </div>
   </div>
 </nav>
+<div class="nscrim" id="notif-scrim" hidden></div>
+<div class="ndrawer" id="notif-drawer" role="dialog" aria-modal="true" aria-labelledby="notif-title" hidden>
+  <div class="nhead">
+    <h2 id="notif-title">Notifications</h2>
+    <button type="button" class="nread" id="notif-read">Mark all as read</button>
+    <button type="button" class="tbtn" id="notif-close" aria-label="Close notifications">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4 4 14" stroke="currentColor" stroke-width="1.800" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <ul class="nlist" id="notif-list"></ul>
+  <p class="note nfoot">Sample notifications for testing.</p>
+</div>
 <div class="home" id="view-home" hidden>
   <h1 class="sr">Promotions</h1>
   <article class="banner hero">
@@ -630,6 +707,20 @@ body{display:flex;flex-direction:column;min-height:100vh}
   <p class="rights">© 2026 wishie. All rights reserved.</p>
 </footer>
 <script>
+(function(){
+  var root = document.documentElement, btn = document.getElementById("theme-toggle");
+  var dark = window.matchMedia("(prefers-color-scheme: dark)");
+  function current(){ return root.getAttribute("data-theme") || (dark.matches ? "dark" : "light"); }
+  function label(){ btn.setAttribute("aria-label", current() === "dark" ? "Switch to light mode" : "Switch to dark mode"); }
+  btn.addEventListener("click", function(){
+    var next = current() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try{ localStorage.setItem("wishie-theme", next); }catch(e){}
+    label();
+  });
+  if(dark.addEventListener) dark.addEventListener("change", label);
+  label();
+})();
 (function(){
   var STATUS = {
     in_stock:{label:"In stock",cls:"b-in"},
@@ -1341,6 +1432,67 @@ body{display:flex;flex-direction:column;min-height:100vh}
   document.addEventListener("keydown", function(ev){
     if(ev.key === "Escape" && document.body.classList.contains("filters-open")) panel(false);
   });
+  // Sample notifications for testing, built from items in the seed wishlist.
+  var NOTIFS = [
+    {item:"ck-47B918G-LXL", type:"drop", ago:"2 hours ago"},
+    {item:"cos-1350646002", type:"out", ago:"Yesterday"},
+    {item:"ck-47H334G-P7A", type:"drop", ago:"2 days ago"}
+  ].map(function(n){ n.unread = true; n.data = SEED.filter(function(i){ return i.id === n.item; })[0]; return n; })
+   .filter(function(n){ return n.data; });
+  var nbtn = $("notif-btn"), drawer = $("notif-drawer"), scrim = $("notif-scrim"), nTimer = null;
+  function renderNotifs(){
+    var list = $("notif-list"), unread = NOTIFS.filter(function(n){ return n.unread; }).length;
+    list.textContent = "";
+    NOTIFS.forEach(function(n){
+      var i = n.data, li = el("li", "nitem" + (n.unread ? " unread" : "") + (n.type === "out" ? " is-out" : ""));
+      var a = el("a"); a.href = "#wishlist";
+      var img = el("img"); img.src = i.images[0].src; img.alt = ""; img.loading = "lazy";
+      var text = el("div", "ntext"), msg = el("span", "nmsg");
+      text.appendChild(el("span", "ntag " + n.type, n.type === "out" ? "Out of stock" : "Price drop"));
+      text.appendChild(el("span", "nname", i.name));
+      if(n.type === "out") msg.textContent = "Sold out at " + i.shop + ". We’ll let you know if it comes back.";
+      else { msg.appendChild(el("b", null, fmtPrice(i))); msg.appendChild(document.createTextNode(" at " + i.shop + " · " + i.note)); }
+      text.appendChild(msg);
+      text.appendChild(el("span", "ntime", n.ago));
+      a.appendChild(img); a.appendChild(text); li.appendChild(a); list.appendChild(li);
+      a.addEventListener("click", function(){ n.unread = false; setDrawer(false); renderNotifs(); });
+    });
+    var badge = $("notif-count");
+    badge.hidden = !unread; badge.textContent = unread;
+    nbtn.setAttribute("aria-label", unread ? "Notifications, " + unread + " unread" : "Notifications");
+    $("notif-read").disabled = !unread;
+  }
+  function setDrawer(open){
+    clearTimeout(nTimer);
+    nbtn.setAttribute("aria-expanded", String(open));
+    if(open){
+      setMenu(false);
+      drawer.hidden = scrim.hidden = false;
+      drawer.offsetWidth;
+      document.body.classList.add("notif-open");
+      $("notif-close").focus();
+    } else if(!drawer.hidden){
+      document.body.classList.remove("notif-open");
+      if(drawer.contains(document.activeElement)) nbtn.focus();
+      nTimer = setTimeout(function(){ drawer.hidden = scrim.hidden = true; }, 300);
+    }
+  }
+  nbtn.addEventListener("click", function(){ setDrawer(true); });
+  $("notif-close").addEventListener("click", function(){ setDrawer(false); });
+  scrim.addEventListener("click", function(){ setDrawer(false); });
+  $("notif-read").addEventListener("click", function(){
+    NOTIFS.forEach(function(n){ n.unread = false; }); renderNotifs(); $("notif-close").focus();
+  });
+  document.addEventListener("keydown", function(ev){
+    if(!document.body.classList.contains("notif-open")) return;
+    if(ev.key === "Escape") setDrawer(false);
+    if(ev.key === "Tab"){
+      var f = drawer.querySelectorAll("button:not(:disabled),a[href]"), first = f[0], last = f[f.length - 1];
+      if(ev.shiftKey && document.activeElement === first){ ev.preventDefault(); last.focus(); }
+      else if(!ev.shiftKey && document.activeElement === last){ ev.preventDefault(); first.focus(); }
+    }
+  });
+  renderNotifs();
   $("contact-form").addEventListener("submit", function(ev){
     ev.preventDefault();
     var need = [["c-subject","Enter a subject."],["c-name","Enter your full name."],["c-message","Write your message."]], first = null;
