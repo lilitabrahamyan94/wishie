@@ -364,11 +364,39 @@ body.notif-open .ndrawer{transform:none}
 .legal p{margin:0 0 14px;line-height:1.65}
 .legal .updated{color:var(--muted);font-size:14px}
 .legal .draft{padding:12px 14px;border-radius:8px;background:var(--low-bg);color:var(--low);font-size:14px}
-.login{display:grid;place-items:center;flex:1;width:100%;padding:56px 16px}
-.login-card{width:100%;max-width:400px;padding:40px 28px 28px;border:1px solid var(--line);border-radius:14px;
-  background:var(--surface);text-align:center}
+.login{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);flex:1;width:100%;min-height:100vh}
+.login-pic{position:relative;background:#1A1A1A}
+.login-pic img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:62% 40%}
+.login-pic::after{content:"";position:absolute;inset:0 0 auto;height:140px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,0))}
+.login-side{display:grid;place-items:center;padding:96px clamp(20px,5vw,72px) 48px}
+.login-card{width:100%;max-width:400px;text-align:center}
 .login-card h1{margin:16px 0 8px;font-family:"Outfit","Schibsted Grotesk",sans-serif;font-weight:300;font-size:32px;
   line-height:1.1;letter-spacing:-0.02em}
+.or{display:flex;align-items:center;gap:14px;margin:22px 0 4px;color:var(--muted);font-size:13px}
+.or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
+.login-form{max-width:none;margin-top:14px;text-align:left}
+.login-form .btn-primary{align-self:stretch}
+.btn-primary:hover{opacity:.88}
+.field .hint{margin:6px 0 0;color:var(--muted);font-size:13px}
+.login-switch{margin:18px 0 0;color:var(--muted);font-size:14px}
+.linkbtn{padding:0;min-height:44px;border:0;background:none;color:var(--ink);font:inherit;font-weight:700;
+  text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.linkbtn:hover{color:var(--accent)}
+body.on-login .foot-bar{display:none}
+body.on-login .top{border-bottom:0}
+@media (min-width:761px){
+  body.on-login .top{position:absolute;left:0;right:0;background:transparent;grid-template-columns:50% 1fr auto}
+  body.on-login .top a.logo,body.on-login .top a.logo svg{color:#FFFFFF}
+  body.on-login .top a.logo svg rect{fill:#FFFFFF}
+  body.on-login .top a.logo:focus-visible{outline-color:#FFFFFF}
+  body.on-login .top .menu{justify-self:start;padding-left:clamp(4px,3vw,48px)}
+}
+@media (max-width:760px){
+  .login{grid-template-columns:minmax(0,1fr);min-height:0}
+  .login-pic{display:none}
+  .login-side{padding:40px 16px 48px}
+}
 .login-sub{margin:0 0 28px;color:var(--muted)}
 .gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:48px;padding:0 18px;
   border:1px solid var(--line);border-radius:99px;background:var(--surface);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
@@ -592,16 +620,37 @@ body.notif-open .ndrawer{transform:none}
   <p>Questions about these terms: [contact email].</p>
 </div>
 <div class="login" id="view-login" hidden>
+  <div class="login-pic">
+    <img src="assets/tile1.jpg" alt="Generated image: Two people in leather jackets sitting back to back on stone steps">
+  </div>
+  <div class="login-side">
   <div class="login-card">
     <svg class="login-heart" width="30" height="28" viewBox="3.5 4.5 15 14" aria-hidden="true"><defs><clipPath id="heart-clip-login"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z"/></clipPath></defs><g clip-path="url(#heart-clip-login)"><rect x="3" y="3" width="16" height="17" fill="#7B2CBF"/></g></svg>
-    <h1>Sign in to wishie</h1>
-    <p class="login-sub">Keep your wishlist on every device.</p>
+    <h1 id="login-title">Sign in to wishie</h1>
+    <p class="login-sub" id="login-sub">Keep your wishlist on every device.</p>
     <button type="button" class="gbtn" id="g-btn">
       <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.140 4.140 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.430 0 4.467-.806 5.956-2.180l-2.908-2.259c-.806.540-1.837.860-3.048.860-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.710A5.410 5.410 0 0 1 3.682 9c0-.593.102-1.170.282-1.710V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.580c1.321 0 2.508.454 3.440 1.345l2.582-2.580C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.290C4.672 5.163 6.656 3.580 9 3.580z"/></svg>
       <span>Continue with Google</span>
     </button>
+    <p class="or"><span>or</span></p>
+    <form class="form login-form" id="email-form" novalidate>
+      <div class="field">
+        <label for="e-email">Email</label>
+        <input id="e-email" name="email" type="email" autocomplete="email" maxlength="254" aria-describedby="e-email-err">
+        <p class="err" id="e-email-err"></p>
+      </div>
+      <div class="field">
+        <label for="e-pass">Password</label>
+        <input id="e-pass" name="password" type="password" autocomplete="current-password" maxlength="128" aria-describedby="e-pass-hint e-pass-err">
+        <p class="hint" id="e-pass-hint" hidden>At least 8 characters.</p>
+        <p class="err" id="e-pass-err"></p>
+      </div>
+      <button type="submit" class="btn-primary" id="e-submit">Sign in with email</button>
+    </form>
     <p class="login-msg" id="login-msg" role="status"></p>
+    <p class="login-switch"><span id="switch-text">New to wishie?</span> <button type="button" class="linkbtn" id="mode-switch">Create an account</button></p>
     <p class="login-fine">By continuing you agree to our <a href="#terms">Terms &amp; Conditions</a> and <a href="#privacy">Privacy Policy</a>.</p>
+  </div>
   </div>
 </div>
 <div class="wrap legal" id="view-privacy" hidden>
@@ -1338,6 +1387,7 @@ body.notif-open .ndrawer{transform:none}
       if(n === v) nav.setAttribute("aria-current","page");
       else nav.removeAttribute("aria-current");
     });
+    document.body.classList.toggle("on-login", v === "login");
     window.scrollTo(0, 0);
   }
   Array.prototype.forEach.call(document.querySelectorAll("a[data-soon]"), function(a){
@@ -1415,8 +1465,23 @@ body.notif-open .ndrawer{transform:none}
   }
   renderCoupons();
   var pbtn = $("nav-profile"), pop = $("profile-menu");
-  function setMenu(open){ pop.hidden = !open; pbtn.setAttribute("aria-expanded", String(open)); }
-  pbtn.addEventListener("click", function(ev){ ev.stopPropagation(); setMenu(pop.hidden); });
+  // No accounts yet: a stored user marks a signed-in visitor. Signed-out visitors go straight to sign-in.
+  function signedIn(){ try{ return !!localStorage.getItem("wishie-user"); }catch(e){ return false; } }
+  function syncProfile(){
+    if(signedIn()){ pbtn.setAttribute("aria-haspopup", "true"); pbtn.setAttribute("aria-expanded", String(!pop.hidden)); }
+    else { pbtn.removeAttribute("aria-haspopup"); pbtn.removeAttribute("aria-expanded"); }
+  }
+  function setMenu(open){ pop.hidden = !open; if(signedIn()) pbtn.setAttribute("aria-expanded", String(open)); }
+  pbtn.addEventListener("click", function(ev){
+    ev.stopPropagation();
+    if(!signedIn()){ setMenu(false); location.hash = "#login"; return; }
+    setMenu(pop.hidden);
+  });
+  $("sign-out").addEventListener("click", function(){
+    try{ localStorage.removeItem("wishie-user"); }catch(e){}
+    syncProfile();
+  });
+  syncProfile();
   pop.addEventListener("click", function(){ setMenu(false); });
   document.addEventListener("click", function(ev){ if(!pop.hidden && !pop.contains(ev.target)) setMenu(false); });
   document.addEventListener("keydown", function(ev){
@@ -1508,6 +1573,34 @@ body.notif-open .ndrawer{transform:none}
   });
   $("g-btn").addEventListener("click", function(){
     $("login-msg").textContent = "Google sign-in isn\u2019t connected yet.";
+  });
+  var signup = false;
+  $("mode-switch").addEventListener("click", function(){
+    signup = !signup;
+    $("login-title").textContent = signup ? "Create your account" : "Sign in to wishie";
+    $("login-sub").textContent = signup ? "Save products from any shop and keep them in one list." : "Keep your wishlist on every device.";
+    $("e-submit").textContent = signup ? "Create account" : "Sign in with email";
+    $("switch-text").textContent = signup ? "Already have an account?" : "New to wishie?";
+    $("mode-switch").textContent = signup ? "Sign in" : "Create an account";
+    $("e-pass").setAttribute("autocomplete", signup ? "new-password" : "current-password");
+    $("e-pass-hint").hidden = !signup;
+    ["e-email","e-pass"].forEach(function(id){ $(id).removeAttribute("aria-invalid"); $(id + "-err").textContent = ""; });
+    $("login-msg").textContent = "";
+  });
+  $("email-form").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var email = $("e-email"), pass = $("e-pass"), first = null;
+    var checks = [
+      [email, !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()), email.value.trim() ? "Enter a valid email address." : "Enter your email."],
+      [pass, signup ? pass.value.length < 8 : !pass.value, signup ? "Use at least 8 characters." : "Enter your password."]
+    ];
+    checks.forEach(function(c){
+      c[0].setAttribute("aria-invalid", String(c[1]));
+      $(c[0].id + "-err").textContent = c[1] ? c[2] : "";
+      if(c[1] && !first) first = c[0];
+    });
+    if(first){ $("login-msg").textContent = ""; first.focus(); return; }
+    $("login-msg").textContent = signup ? "Email sign-up isn\u2019t connected yet, so no account was created." : "Email sign-in isn\u2019t connected yet.";
   });
   window.addEventListener("hashchange", show);
   show();
