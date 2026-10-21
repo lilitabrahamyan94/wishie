@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>cultt</title>
+<title>culttt</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -74,6 +74,41 @@ legend{font-weight:600;font-size:13px;color:var(--muted);padding:0;margin-bottom
   .card:hover .rm,.rm:focus-visible{opacity:1}
 }
 @media (prefers-reduced-motion:reduce){.rm{transition:none}}
+.alertbtn{position:absolute;left:8px;top:8px;z-index:2;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;padding:0}
+.alertbtn.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+@media (hover:hover){
+  .alertbtn{opacity:0;transition:opacity .15s}
+  .card:hover .alertbtn,.alertbtn:focus-visible{opacity:1}
+}
+@media (prefers-reduced-motion:reduce){.alertbtn{transition:none}}
+.alerton{display:inline-flex;align-items:center;gap:5px;color:var(--accent);font-size:13px;font-weight:600}
+.ascrim{position:fixed;inset:0;z-index:50;background:rgba(10,14,22,.4);opacity:0;transition:opacity .2s}
+.adlg{position:fixed;left:50%;top:50%;z-index:51;width:min(420px,calc(100vw - 32px));padding:20px 20px 22px;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 48px rgba(0,0,0,.2);
+  opacity:0;transform:translate(-50%,-46%);transition:opacity .2s,transform .2s cubic-bezier(.2,.8,.2,1)}
+.ascrim[hidden],.adlg[hidden]{display:none}
+body.alert-open{overflow:hidden}
+body.alert-open .ascrim{opacity:1}
+body.alert-open .adlg{opacity:1;transform:translate(-50%,-50%)}
+.ahead{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.ahead h2{margin:10px auto 0 0;font-size:18px}
+.aname{margin:0;font-weight:600;line-height:1.3}
+.anow{margin:2px 0 18px;color:var(--muted);font-size:14px}
+.anow b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.amoney{position:relative}
+.amoney span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.field .amoney input{padding-left:calc(14px + var(--cw,1ch) + 6px);font-variant-numeric:tabular-nums}
+.aacts{display:flex;gap:10px;margin-top:18px}
+.amsg{min-height:20px;margin:12px 0 0;color:var(--muted);font-size:13px}
+.amsg.err{color:var(--out)}
+@media (prefers-reduced-motion:reduce){.ascrim,.adlg{transition:none}}
+@media (max-width:760px){
+  .adlg{left:0;right:0;top:auto;bottom:0;width:auto;border-radius:16px 16px 0 0;border-width:1px 0 0;
+    padding-bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateY(100%);opacity:1}
+  body.alert-open .adlg{transform:none}
+}
 .undo{font:inherit;font-weight:600;color:var(--ink);background:none;border:0;padding:0;
   text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .card.is-out .plate,.card.is-out .gallery,.card.is-out .name,.card.is-out .price{opacity:.55}
@@ -267,6 +302,7 @@ body.notif-open .ndrawer{transform:none}
 .nitem.unread a::before{content:"";position:absolute;left:9px;top:22px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
 .nitem img{flex:none;width:56px;height:70px;object-fit:cover;border-radius:6px;background:var(--plate)}
 .nitem.is-out img{opacity:.55}
+.nitem .nph{flex:none;width:56px;height:70px;border-radius:6px;background:var(--plate)}
 .ntext{min-width:0;display:flex;flex-direction:column;gap:3px}
 .ntag{align-self:flex-start;padding:1px 8px;border-radius:4px;font-size:12px;font-weight:600}
 .ntag.drop{background:var(--in-bg);color:var(--in)}
@@ -447,9 +483,9 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
 </head>
 <body>
 <nav class="top" aria-label="Main">
-  <a href="#home" class="logo" aria-label="cultt, home">
+  <a href="#home" class="logo" aria-label="culttt, home">
     <svg width="15" height="14" viewBox="3.5 4.5 15 14" aria-hidden="true"><defs><clipPath id="heart-clip"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z"/></clipPath></defs><g clip-path="url(#heart-clip)"><rect x="3" y="3" width="16" height="17" fill="#7B2CBF"/></g></svg>
-    <span>cultt</span>
+    <span>culttt</span>
   </a>
   <div class="menu">
     <a href="#home" id="nav-home">Home</a>
@@ -487,6 +523,33 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   </div>
   <ul class="nlist" id="notif-list"></ul>
   <p class="note nfoot">Sample notifications for testing.</p>
+</div>
+<div class="ascrim" id="alert-scrim" hidden></div>
+<div class="adlg" id="alert-dlg" role="dialog" aria-modal="true" aria-labelledby="alert-title" hidden>
+  <div class="ahead">
+    <h2 id="alert-title">Price drop alert</h2>
+    <button type="button" class="tbtn" id="alert-close" aria-label="Close price alert">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4 4 14" stroke="currentColor" stroke-width="1.800" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <p class="aname" id="alert-name"></p>
+  <p class="anow" id="alert-now"></p>
+  <form id="alert-form" novalidate>
+    <div class="field">
+      <label for="alert-target">Alert me when the price drops to</label>
+      <div class="amoney">
+        <span id="alert-cur" aria-hidden="true"></span>
+        <input id="alert-target" name="target" type="text" inputmode="decimal" autocomplete="off" maxlength="12" aria-describedby="alert-target-err alert-hint">
+      </div>
+      <p class="hint" id="alert-hint">We check prices about every 6 hours and tell you in Notifications.</p>
+      <p class="err" id="alert-target-err"></p>
+    </div>
+    <div class="aacts">
+      <button type="button" class="pill ghost" id="alert-remove">Remove alert</button>
+      <button type="submit" class="pill solid" id="alert-save">Save alert</button>
+    </div>
+    <p class="amsg" id="alert-msg" role="status"></p>
+  </form>
 </div>
 <div class="home" id="view-home" hidden>
   <h1 class="sr">Promotions</h1>
@@ -575,7 +638,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <div class="split-copy">
     <p class="eyebrow">About us</p>
     <h1>Everything you want, in one place.</h1>
-    <p>cultt is for people who love shopping online and shop in more than one store. Save a product from any shop with its link, and it joins a single list you can come back to.</p>
+    <p>culttt is for people who love shopping online and shop in more than one store. Save a product from any shop with its link, and it joins a single list you can come back to.</p>
     <p>For every saved piece we keep the photo, the price and whether it is in stock, so you can compare what you love side by side and buy when the moment is right, not when a sale banner tells you to.</p>
     <p>We also gather promotions and coupon codes from the brands you follow, and we label advertising clearly. Your list is yours: it exists to help you choose well, not to push you to buy more.</p>
     <p><a class="textlink" href="#wishlist">Go to your wishlist</a></p>
@@ -588,15 +651,15 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h1>Terms &amp; Conditions</h1>
   <p class="updated">Last updated: 10 October 2026</p>
   <p class="draft">Draft for review. Items in [brackets] still need your details, and a lawyer should check this text before launch.</p>
-  <p>These terms are an agreement between you and [company name] (“cultt”, “we”, “us”). By using cultt you agree to them. If you do not agree, please do not use the service.</p>
-  <h2>1. What cultt does</h2>
-  <p>cultt lets you save products from different online shops in one list, see their price and availability, and find coupons and promotions. We show information about products sold by other companies. We do not sell those products and are not a party to any purchase you make from a shop.</p>
+  <p>These terms are an agreement between you and [company name] (“culttt”, “we”, “us”). By using culttt you agree to them. If you do not agree, please do not use the service.</p>
+  <h2>1. What culttt does</h2>
+  <p>culttt lets you save products from different online shops in one list, see their price and availability, and find coupons and promotions. We show information about products sold by other companies. We do not sell those products and are not a party to any purchase you make from a shop.</p>
   <h2>2. Using the service</h2>
-  <p>You may use cultt for personal, non-commercial purposes. You must be at least 16 years old, or the age of digital consent where you live. The service is currently free. If we introduce paid features, we will tell you before any charge applies.</p>
+  <p>You may use culttt for personal, non-commercial purposes. You must be at least 16 years old, or the age of digital consent where you live. The service is currently free. If we introduce paid features, we will tell you before any charge applies.</p>
   <h2>3. Accounts</h2>
   <p>Some features need an account, which you can create by signing in with Google. You are responsible for activity on your account and for keeping access to it secure. Tell us promptly if you think someone else has used it.</p>
   <h2>4. Closing your account</h2>
-  <p>You can stop using cultt and ask us to delete your account at any time. We may suspend or close an account that breaks these terms, harms other people, or puts the service at risk.</p>
+  <p>You can stop using culttt and ask us to delete your account at any time. We may suspend or close an account that breaks these terms, harms other people, or puts the service at risk.</p>
   <h2>5. Prices, availability and coupons</h2>
   <p>Prices, stock status, product details and coupon codes come from the shops themselves or from public pages, and they change often. We try to keep them current but cannot guarantee that they are accurate, complete or still valid. Always confirm the final price and terms on the shop’s own site before you buy.</p>
   <h2>6. Promotions and sponsored content</h2>
@@ -604,9 +667,9 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h2>7. Content</h2>
   <p>Product names, photos and descriptions belong to their owners and are shown to identify the products you saved. Links you add to your list remain yours. You give us permission to store and display them so the service can work.</p>
   <h2>8. What you may not do</h2>
-  <p>Do not use cultt to break the law, copy or scrape the service in bulk, interfere with how it runs, try to access another person’s account, or upload anything harmful or misleading.</p>
+  <p>Do not use culttt to break the law, copy or scrape the service in bulk, interfere with how it runs, try to access another person’s account, or upload anything harmful or misleading.</p>
   <h2>9. Intellectual property</h2>
-  <p>The cultt name, logo, design and software belong to us. These terms do not give you any rights in them beyond using the service as intended. If you send us ideas or feedback, we may use them without owing you anything.</p>
+  <p>The culttt name, logo, design and software belong to us. These terms do not give you any rights in them beyond using the service as intended. If you send us ideas or feedback, we may use them without owing you anything.</p>
   <h2>10. No warranty</h2>
   <p>The service is provided “as is” and “as available”. To the extent the law allows, we make no promises that it will be uninterrupted, error-free or fit for a particular purpose.</p>
   <h2>11. Limits on our liability</h2>
@@ -627,7 +690,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <div class="login-side">
   <div class="login-card">
     <svg class="login-heart" width="30" height="28" viewBox="3.5 4.5 15 14" aria-hidden="true"><defs><clipPath id="heart-clip-login"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z"/></clipPath></defs><g clip-path="url(#heart-clip-login)"><rect x="3" y="3" width="16" height="17" fill="#7B2CBF"/></g></svg>
-    <h1 id="login-title">Sign in to cultt</h1>
+    <h1 id="login-title">Sign in to culttt</h1>
     <p class="login-sub" id="login-sub">Keep your wishlist on every device.</p>
     <button type="button" class="gbtn" id="g-btn">
       <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.140 4.140 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.430 0 4.467-.806 5.956-2.180l-2.908-2.259c-.806.540-1.837.860-3.048.860-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.710A5.410 5.410 0 0 1 3.682 9c0-.593.102-1.170.282-1.710V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.580c1.321 0 2.508.454 3.440 1.345l2.582-2.580C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.290C4.672 5.163 6.656 3.580 9 3.580z"/></svg>
@@ -649,7 +712,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       <button type="submit" class="btn-primary" id="e-submit">Sign in with email</button>
     </form>
     <p class="login-msg" id="login-msg" role="status"></p>
-    <p class="login-switch"><span id="switch-text">New to cultt?</span> <button type="button" class="linkbtn" id="mode-switch">Create an account</button></p>
+    <p class="login-switch"><span id="switch-text">New to culttt?</span> <button type="button" class="linkbtn" id="mode-switch">Create an account</button></p>
     <p class="login-fine">By continuing you agree to our <a href="#terms">Terms &amp; Conditions</a> and <a href="#privacy">Privacy Policy</a>.</p>
   </div>
   </div>
@@ -658,15 +721,16 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h1>Privacy Policy</h1>
   <p class="updated">Last updated: 10 October 2026</p>
   <p class="draft">Draft for review. Items in [brackets] still need your details, and a lawyer should check this text before launch.</p>
-  <p>This policy explains what information cultt handles when you use the site, why, and the choices you have.</p>
+  <p>This policy explains what information culttt handles when you use the site, why, and the choices you have.</p>
   <h2>1. Who we are</h2>
-  <p>cultt is run by [company name], [address]. We are responsible for the personal information described here. To reach us about privacy, write to [contact email].</p>
+  <p>culttt is run by [company name], [address]. We are responsible for the personal information described here. To reach us about privacy, write to [contact email].</p>
   <h2>2. The short version</h2>
-  <p>You can use cultt today without an account. Your wishlist is kept in your own browser, not on our servers. We do not use advertising trackers or analytics cookies, and we do not sell personal information.</p>
+  <p>You can use culttt today without an account. Your wishlist is kept in your own browser, not on our servers. We do not use advertising trackers or analytics cookies, and we do not sell personal information.</p>
   <h2>3. What we collect and why</h2>
   <p><strong>Your wishlist.</strong> The product links you add, and the ones you remove, are saved in your browser’s local storage on your device. We cannot see them.</p>
   <p><strong>Product links you paste.</strong> When you add a link, your browser sends that link to our lookup service so it can read the product’s name, photos, price and stock from the shop. We use the link only to answer that request and do not keep a record of it tied to you.</p>
-  <p><strong>Technical information.</strong> Like any website, the companies that host cultt receive your IP address, browser type and the time of each request, so they can deliver pages and keep the service secure.</p>
+  <p><strong>Price alerts.</strong> When you set a price alert, your browser sends the product link, your target price and a random alert number to our lookup service. We keep them until you remove the alert or the product, so we can check the price on a schedule. They are not tied to your name or email. The alerts you set are also saved in your browser’s local storage.</p>
+  <p><strong>Technical information.</strong> Like any website, the companies that host culttt receive your IP address, browser type and the time of each request, so they can deliver pages and keep the service secure.</p>
   <p><strong>Messages.</strong> The Get in Touch form is not connected yet, so nothing you type there is sent or stored. When it is, we will use your name and message only to reply to you.</p>
   <p><strong>Account details, once sign-in is available.</strong> If you sign in with Google, we will receive your name, email address and profile picture from Google, and we will store your wishlist with your account so it follows you across devices. We will not receive your Google password.</p>
   <h2>4. Cookies and similar storage</h2>
@@ -674,16 +738,16 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h2>5. Who else receives information</h2>
   <p><strong>Hosting providers.</strong> GitHub hosts the website and Cloudflare runs the lookup service. Both process technical information on our behalf.</p>
   <p><strong>Google Fonts.</strong> The site loads its typefaces from Google, which receives your IP address when your browser requests them.</p>
-  <p><strong>Shops.</strong> Product photos load directly from the shops’ own servers, so a shop can see that your device requested an image. When you follow “Open at” or a coupon link, you leave cultt and the shop’s own privacy policy applies.</p>
+  <p><strong>Shops.</strong> Product photos load directly from the shops’ own servers, so a shop can see that your device requested an image. When you follow “Open at” or a coupon link, you leave culttt and the shop’s own privacy policy applies.</p>
   <p>We do not sell your personal information or share it for advertising.</p>
   <h2>6. Ads and sponsored content</h2>
-  <p>Cards marked “Ad” or “Sponsored” are shown to everyone in the same way. They are not chosen using your personal information, and they do not track you on cultt. If you follow one, the advertiser’s site may use its own cookies.</p>
+  <p>Cards marked “Ad” or “Sponsored” are shown to everyone in the same way. They are not chosen using your personal information, and they do not track you on culttt. If you follow one, the advertiser’s site may use its own cookies.</p>
   <h2>7. How long we keep information</h2>
   <p>Your wishlist stays in your browser until you remove items or clear your browser storage. Hosting logs are kept by our providers for limited periods under their own policies. Once accounts exist, we will keep account information until you delete your account.</p>
   <h2>8. Your rights</h2>
   <p>Depending on where you live, you may have the right to ask for a copy of your personal information, to have it corrected or deleted, to object to or restrict how it is used, and to complain to your local data protection authority. Write to [contact email] and we will respond within the time the law requires.</p>
   <h2>9. Children</h2>
-  <p>cultt is not intended for children under 16, and we do not knowingly collect their personal information.</p>
+  <p>culttt is not intended for children under 16, and we do not knowingly collect their personal information.</p>
   <h2>10. Where information is processed</h2>
   <p>Our providers may process information in countries other than yours, including the United States. Where the law requires it, we rely on appropriate safeguards for those transfers.</p>
   <h2>11. Changes to this policy</h2>
@@ -693,10 +757,10 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h1>FAQs</h1>
   <p class="updated">Answers to what people ask most.</p>
   <h2>Getting started</h2>
-  <details class="qa"><summary>What is cultt?</summary><p>A single place for products you want to buy from different online shops. You save a product with its link, and it joins one list with its photo, price and stock status.</p></details>
+  <details class="qa"><summary>What is culttt?</summary><p>A single place for products you want to buy from different online shops. You save a product with its link, and it joins one list with its photo, price and stock status.</p></details>
   <details class="qa"><summary>How do I add a product?</summary><p>Open the product’s page in the shop, copy the address from your browser, paste it into the “Paste a product link” field on the Wishlist page, and press the blue plus button.</p></details>
   <details class="qa"><summary>Which shops can I save from?</summary><p>You can paste a link from any online shop. How much detail we can show depends on the shop: some share photos, price and stock automatically, and some do not.</p></details>
-  <details class="qa"><summary>Is cultt free?</summary><p>Yes. There is nothing to pay to save products or use coupons.</p></details>
+  <details class="qa"><summary>Is culttt free?</summary><p>Yes. There is nothing to pay to save products or use coupons.</p></details>
   <h2>Your list</h2>
   <details class="qa"><summary>Why was my product added without a photo or price?</summary><p>Some shops block automatic lookups of their pages. When that happens the link is still saved, and “Open at” the shop takes you to the product, but we cannot show its photo, price or stock.</p></details>
   <details class="qa"><summary>Where is my list saved? Can I see it on my phone too?</summary><p>Right now your list is saved in the browser you added it from, so it does not appear on your other devices and other people cannot see it. Signing in to keep one list everywhere is on the way.</p></details>
@@ -705,12 +769,12 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h2>Prices and stock</h2>
   <details class="qa"><summary>How up to date are the price and stock?</summary><p>Each product shows a “Checked” date. That is the last time we read the price and stock from the shop. Prices change often, so confirm the final price on the shop’s site before you buy.</p></details>
   <details class="qa"><summary>What does “Was $99.00 (40% off)” mean?</summary><p>It is the shop’s own earlier price and the discount the shop was advertising when we last checked. We show it as the shop states it and do not verify how long that earlier price was charged.</p></details>
-  <details class="qa"><summary>Will you tell me when a price drops or something is back in stock?</summary><p>Not yet. For now, open your wishlist to see current details. Alerts are planned.</p></details>
-  <details class="qa"><summary>Can I buy products on cultt?</summary><p>No. We do not sell anything. “Open at” takes you to the shop, and you buy there under the shop’s own terms, delivery and returns.</p></details>
+  <details class="qa"><summary>Will you tell me when a price drops or something is back in stock?</summary><p>For price drops, yes. On the Wishlist page, select the bell on a product (it appears when you point at the product on a computer) and enter the price you’d like to pay. We check the price about every 6 hours, and when it drops to your price or lower, it shows up in Notifications. Stock alerts are planned.</p></details>
+  <details class="qa"><summary>Can I buy products on culttt?</summary><p>No. We do not sell anything. “Open at” takes you to the shop, and you buy there under the shop’s own terms, delivery and returns.</p></details>
   <h2>Coupons and ads</h2>
   <details class="qa"><summary>Are the coupons real?</summary><p>Not yet. The coupons shown today are samples marked “Sample offer”, with codes that start with SAMPLE. They will not work at checkout. Real offers will replace them.</p></details>
-  <details class="qa"><summary>What do “Ad”, “Sponsored” and “Exclusive” mean?</summary><p>“Ad” and “Sponsored” mark paid placements from a brand. “Exclusive” marks an offer that comes with a code for cultt users. Products you saved yourself are never ads.</p></details>
-  <details class="qa"><summary>Does cultt earn money when I buy something?</summary><p>We may earn a commission from a shop when you follow a link and buy. It does not change the price you pay.</p></details>
+  <details class="qa"><summary>What do “Ad”, “Sponsored” and “Exclusive” mean?</summary><p>“Ad” and “Sponsored” mark paid placements from a brand. “Exclusive” marks an offer that comes with a code for culttt users. Products you saved yourself are never ads.</p></details>
+  <details class="qa"><summary>Does culttt earn money when I buy something?</summary><p>We may earn a commission from a shop when you follow a link and buy. It does not change the price you pay.</p></details>
   <h2>Account and help</h2>
   <details class="qa"><summary>How do I sign in?</summary><p>Sign-in with Google is being set up and does not work yet. You can use everything on the site without an account in the meantime.</p></details>
   <details class="qa"><summary>How do I contact you?</summary><p>Use the Get in Touch page linked at the bottom of every page.</p></details>
@@ -740,9 +804,9 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   </form>
 </div>
 <footer class="foot-bar">
-  <a href="#home" class="flogo" aria-label="cultt, home">
+  <a href="#home" class="flogo" aria-label="culttt, home">
     <svg width="11" height="10" viewBox="3.5 4.5 15 14" aria-hidden="true"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z" fill="currentColor"/></svg>
-    <span>cultt</span>
+    <span>culttt</span>
   </a>
   <nav aria-label="Footer">
     <ul>
@@ -754,7 +818,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       <li><a href="#terms">Terms &amp; Conditions</a></li>
     </ul>
   </nav>
-  <p class="rights">© 2026 cultt. All rights reserved.</p>
+  <p class="rights">© 2026 culttt. All rights reserved.</p>
 </footer>
 <script>
 (function(){
@@ -924,6 +988,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     return {total:pool.length, map:map};
   }
   function render(){
+    if(NOTIFS) renderNotifs();
     var host = $("f-groups"), pick = function(key){ return function(v){ filter[key] = v; render(); }; };
     host.textContent = "";
     group(host, "sort", "Sort by", SORTS.map(function(o){ return {value:o[0], label:o[1]}; }), sortBy,
@@ -987,6 +1052,17 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       rm.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" fill="none"/></svg>';
       rm.addEventListener("click", function(){removeItem(i, rm)});
       card.appendChild(rm);
+      var al = alertOf(i), canAlert = i.id && typeof i.price === "number" && safeUrl(i.url);
+      if(canAlert){
+        var ab = el("button","alertbtn" + (al ? " on" : ""));
+        ab.type = "button";
+        ab.setAttribute("aria-haspopup","dialog");
+        if(i.id) ab.setAttribute("data-item", i.id);
+        ab.setAttribute("aria-label", (al ? "Edit price alert for " : "Add price drop alert for ") + (i.name||"item"));
+        ab.innerHTML = ICON_BELL;
+        ab.addEventListener("click", function(){ openAlert(i, ab); });
+        card.appendChild(ab);
+      }
       var body = el("div","body");
       var top = el("div","toprow");
       top.appendChild(el("span","badge " + STATUS[a].cls, STATUS[a].label));
@@ -1006,6 +1082,12 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       foot.appendChild(el("span","price",fmtPrice(i)));
       if(isWas) foot.appendChild(el("span","was",i.note));
       body.appendChild(foot);
+      if(al && canAlert){
+        var on = el("span","alerton");
+        on.innerHTML = ICON_BELL.replace(/width="16" height="16"/, 'width="13" height="13"');
+        on.appendChild(document.createTextNode("Alert at " + fmtPrice({price:al.target, currency:i.currency})));
+        body.appendChild(on);
+      }
       card.appendChild(body);
       grid.appendChild(card);
       if((n + 1) % 5 === 0) grid.appendChild(adCard());
@@ -1022,6 +1104,149 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       .then(function(r){ return r.json(); })
       .catch(function(){ return null; })
       .then(function(d){ clearTimeout(t); return d; });
+  }
+
+  // Price drop alerts. Kept in this browser as {itemId: {id, target, seenHit}};
+  // the backend re-checks each alert's price on a schedule (see backend/).
+  var ICON_BELL = '<svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 1.800a5 5 0 0 0-5 5v2.700L2.600 12.300a.7.7 0 0 0 .6 1.100h11.600a.7.7 0 0 0 .6-1.100L14 9.500V6.800a5 5 0 0 0-5-5z" fill="currentColor"/><path d="M6.900 14.600a2.100 2.100 0 0 0 4.200 0z" fill="currentColor"/></svg>';
+  var LS_ALERTS = "wishlist.alerts", alerts = null, alertHits = {};
+  function getAlerts(){
+    if(!alerts){
+      try{ var v = JSON.parse(localStorage.getItem(LS_ALERTS) || "{}"); alerts = v && typeof v === "object" && !Array.isArray(v) ? v : {}; }
+      catch(e){ alerts = {}; }
+    }
+    return alerts;
+  }
+  function saveAlerts(){ try{ localStorage.setItem(LS_ALERTS, JSON.stringify(alerts)); }catch(e){} }
+  function alertOf(i){ var a = i.id && getAlerts()[i.id]; return a && typeof a.target === "number" ? a : null; }
+  function newId(){
+    if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    var b = new Uint8Array(16); crypto.getRandomValues(b); b[6] = b[6] & 15 | 64; b[8] = b[8] & 63 | 128;
+    var h = Array.prototype.map.call(b, function(x){ return (x + 256).toString(16).slice(1); }).join("");
+    return h.slice(0,8) + "-" + h.slice(8,12) + "-" + h.slice(12,16) + "-" + h.slice(16,20) + "-" + h.slice(20);
+  }
+  function alertApi(method, path, body){
+    if(!API_URL) return Promise.resolve({ok:true});
+    var opts = {method: method};
+    if(body){ opts.headers = {"Content-Type":"application/json"}; opts.body = JSON.stringify(body); }
+    return fetch(API_URL.replace(/\/+$/,"") + path, opts)
+      .then(function(r){ return r.json(); })
+      .catch(function(){ return null; });
+  }
+  function curSymbol(cur){
+    try{
+      var p = new Intl.NumberFormat(undefined,{style:"currency",currency:cur||"USD"}).formatToParts(0)
+        .filter(function(x){ return x.type === "currency"; })[0];
+      return p ? p.value : (cur||"$");
+    }catch(e){ return cur||"$"; }
+  }
+  function parseMoney(s){
+    var t = String(s||"").replace(/[^\d.,]/g,"").replace(/,(\d{1,2})$/,".$1").replace(/,/g,"");
+    var n = parseFloat(t);
+    return isFinite(n) ? Math.round(n * 100) / 100 : NaN;
+  }
+
+  var aDlg = $("alert-dlg"), aScrim = $("alert-scrim"), aInput = $("alert-target"), aItem = null, aOpener = null, aTimer = null, aBusy = false;
+  function aMsg(text, err){ var m = $("alert-msg"); m.textContent = text; m.className = "amsg" + (err ? " err" : ""); }
+  function aErr(text){
+    aInput.setAttribute("aria-invalid", String(!!text));
+    $("alert-target-err").textContent = text || "";
+  }
+  function openAlert(i, opener){
+    clearTimeout(aTimer);
+    aItem = i; aOpener = opener;
+    var cur = alertOf(i), sym = curSymbol(i.currency);
+    $("alert-name").textContent = i.name || "Untitled item";
+    var now = $("alert-now"); now.textContent = "Now ";
+    now.appendChild(el("b", null, fmtPrice(i)));
+    now.appendChild(document.createTextNode(" at " + (i.shop || "the shop")));
+    $("alert-cur").textContent = sym;
+    aInput.style.setProperty("--cw", sym.length + "ch");
+    aInput.value = (cur ? cur.target : Math.floor(i.price * 0.9 * 100) / 100).toFixed(2).replace(/\.00$/,"");
+    $("alert-title").textContent = cur ? "Edit price alert" : "Price drop alert";
+    $("alert-remove").hidden = !cur;
+    $("alert-save").textContent = cur ? "Update alert" : "Save alert";
+    aErr(""); aMsg("");
+    aDlg.hidden = aScrim.hidden = false;
+    aDlg.offsetWidth;
+    document.body.classList.add("alert-open");
+    aInput.focus(); aInput.select();
+  }
+  function closeAlert(){
+    if(aDlg.hidden) return;
+    document.body.classList.remove("alert-open");
+    var back = aOpener;
+    aTimer = setTimeout(function(){ aDlg.hidden = aScrim.hidden = true; }, 220);
+    // The card is rebuilt after a save, so return focus to its new button when the old one is gone.
+    if(back && !document.body.contains(back) && aItem){
+      back = Array.prototype.filter.call(document.querySelectorAll(".alertbtn"), function(b){
+        return b.getAttribute("data-item") === aItem.id;
+      })[0];
+    }
+    if(back) back.focus();
+    aItem = aOpener = null;
+  }
+  function busy(on){ aBusy = on; $("alert-save").disabled = $("alert-remove").disabled = on; }
+  $("alert-form").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    if(aBusy || !aItem) return;
+    var i = aItem, v = parseMoney(aInput.value);
+    if(!aInput.value.trim()){ aErr("Enter a price."); aInput.focus(); return; }
+    if(!(v > 0)){ aErr("Enter a price above zero, for example " + fmtPrice({price:Math.floor(i.price * 0.9), currency:i.currency}) + "."); aInput.focus(); return; }
+    if(v >= i.price){ aErr("Pick a price below the current " + fmtPrice(i) + "."); aInput.focus(); return; }
+    aErr("");
+    var had = alertOf(i), id = had ? had.id : newId();
+    busy(true); aMsg("Saving…");
+    alertApi("PUT", "/alerts/" + id, {url: i.url, target: v, currency: i.currency || "USD"}).then(function(d){
+      busy(false);
+      if(!d || !d.ok){ aMsg("The alert wasn't saved. Try again in a moment.", true); return; }
+      getAlerts()[i.id] = {id: id, target: v, seenHit: null};
+      delete alertHits[id];
+      saveAlerts(); render(); closeAlert();
+      say("We’ll let you know when " + (i.name||"it") + " drops to " + fmtPrice({price:v, currency:i.currency}) + ".");
+    });
+  });
+  $("alert-remove").addEventListener("click", function(){
+    if(aBusy || !aItem) return;
+    var i = aItem, had = alertOf(i);
+    if(!had){ closeAlert(); return; }
+    busy(true); aMsg("Removing…");
+    alertApi("DELETE", "/alerts/" + had.id).then(function(d){
+      busy(false);
+      if(!d || !d.ok){ aMsg("The alert wasn't removed. Try again in a moment.", true); return; }
+      delete getAlerts()[i.id]; delete alertHits[had.id];
+      saveAlerts(); render(); closeAlert();
+      say("Price alert removed.");
+    });
+  });
+  aInput.addEventListener("input", function(){ if(aInput.getAttribute("aria-invalid") === "true") aErr(""); });
+  $("alert-close").addEventListener("click", closeAlert);
+  aScrim.addEventListener("click", closeAlert);
+  document.addEventListener("keydown", function(ev){
+    if(!document.body.classList.contains("alert-open")) return;
+    if(ev.key === "Escape") closeAlert();
+    if(ev.key === "Tab"){
+      var f = Array.prototype.filter.call(aDlg.querySelectorAll("button,input"), function(x){ return !x.disabled && !x.hidden; });
+      var first = f[0], last = f[f.length - 1];
+      if(ev.shiftKey && document.activeElement === first){ ev.preventDefault(); last.focus(); }
+      else if(!ev.shiftKey && document.activeElement === last){ ev.preventDefault(); first.focus(); }
+    }
+  });
+  function dropAlert(i){
+    var had = alertOf(i);
+    if(!had) return;
+    delete getAlerts()[i.id]; delete alertHits[had.id]; saveAlerts();
+    alertApi("DELETE", "/alerts/" + had.id);
+  }
+  function checkAlerts(){
+    var all = getAlerts(), ids = Object.keys(all).map(function(k){ return all[k].id; }).filter(Boolean);
+    if(!API_URL || !ids.length) return;
+    alertApi("GET", "/alerts?ids=" + ids.slice(0, 50).join(",")).then(function(d){
+      if(!d || !d.ok || !d.alerts) return;
+      alertHits = {};
+      Object.keys(d.alerts).forEach(function(id){ if(d.alerts[id] && d.alerts[id].hitAt) alertHits[id] = d.alerts[id]; });
+      renderNotifs();
+    });
   }
   var SEED = [
     {
@@ -1282,7 +1507,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     if(!i.id || (!store && !local)){ say("The list isn't connected yet. Reload the page and try again.", true); return; }
     if(local){
       var g = getGone();
-      g.push(i.id); saveGone(); goLocal();
+      g.push(i.id); saveGone(); dropAlert(i); goLocal();
       offerUndo(i, function(){
         var k = g.indexOf(i.id);
         if(k >= 0) g.splice(k, 1);
@@ -1294,6 +1519,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     var data = Object.assign({}, i); delete data.id;
     var path = "items/" + i.id;
     store.doc(path).delete().then(function(){
+      dropAlert(i);
       offerUndo(i, function(){
         store.doc(path).set(data).then(function(){ say("Restored."); },
           function(){ say("It couldn't be restored. Add the link again.", true); });
@@ -1506,22 +1732,48 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   ].map(function(n){ n.unread = true; n.data = SEED.filter(function(i){ return i.id === n.item; })[0]; return n; })
    .filter(function(n){ return n.data; });
   var nbtn = $("notif-btn"), drawer = $("notif-drawer"), scrim = $("notif-scrim"), nTimer = null;
+  function ago(s){
+    var d = new Date(s), m = Math.round((Date.now() - d) / 60000);
+    if(!s || isNaN(d)) return "";
+    var u = m < 60 ? [-Math.max(m, 1), "minute"] : m < 1440 ? [-Math.round(m / 60), "hour"] : [-Math.round(m / 1440), "day"];
+    try{ var t = new Intl.RelativeTimeFormat(undefined, {numeric:"auto"}).format(u[0], u[1]); return t.charAt(0).toUpperCase() + t.slice(1); }
+    catch(e){ return fmtDate(s); }
+  }
+  // Price alerts that hit their target, newest first, for items still on the list.
+  function alertNotifs(){
+    var all = getAlerts();
+    return Object.keys(all).map(function(itemId){
+      var a = all[itemId], hit = a && alertHits[a.id];
+      var i = hit && items.filter(function(x){ return x.id === itemId; })[0];
+      if(!i) return null;
+      return {type:"drop", alert:a, hit:hit, data:i, ago:ago(hit.hitAt), unread: a.seenHit !== hit.hitAt,
+        read: function(){ a.seenHit = hit.hitAt; saveAlerts(); }};
+    }).filter(Boolean).sort(function(x, y){ return String(y.hit.hitAt).localeCompare(String(x.hit.hitAt)); });
+  }
+  function allNotifs(){ return alertNotifs().concat(NOTIFS); }
   function renderNotifs(){
-    var list = $("notif-list"), unread = NOTIFS.filter(function(n){ return n.unread; }).length;
+    var shown = allNotifs(), list = $("notif-list"), unread = shown.filter(function(n){ return n.unread; }).length;
     list.textContent = "";
-    NOTIFS.forEach(function(n){
+    shown.forEach(function(n){
       var i = n.data, li = el("li", "nitem" + (n.unread ? " unread" : "") + (n.type === "out" ? " is-out" : ""));
       var a = el("a"); a.href = "#wishlist";
-      var img = el("img"); img.src = i.images[0].src; img.alt = ""; img.loading = "lazy";
+      var ph = photos(i)[0], img;
+      if(ph){ img = el("img"); img.src = srcOf(ph); img.alt = ""; img.loading = "lazy"; }
+      else img = el("span", "nph");
       var text = el("div", "ntext"), msg = el("span", "nmsg");
       text.appendChild(el("span", "ntag " + n.type, n.type === "out" ? "Out of stock" : "Price drop"));
       text.appendChild(el("span", "nname", i.name));
       if(n.type === "out") msg.textContent = "Sold out at " + i.shop + ". We’ll let you know if it comes back.";
+      else if(n.alert){
+        var cur = n.hit.currency || i.currency;
+        msg.appendChild(el("b", null, typeof n.hit.lastPrice === "number" ? fmtPrice({price:n.hit.lastPrice, currency:cur}) : "Price drop"));
+        msg.appendChild(document.createTextNode(" at " + (i.shop || "the shop") + " · Your alert was " + fmtPrice({price:n.alert.target, currency:cur})));
+      }
       else { msg.appendChild(el("b", null, fmtPrice(i))); msg.appendChild(document.createTextNode(" at " + i.shop + " · " + i.note)); }
       text.appendChild(msg);
       text.appendChild(el("span", "ntime", n.ago));
       a.appendChild(img); a.appendChild(text); li.appendChild(a); list.appendChild(li);
-      a.addEventListener("click", function(){ n.unread = false; setDrawer(false); renderNotifs(); });
+      a.addEventListener("click", function(){ n.unread = false; if(n.read) n.read(); setDrawer(false); renderNotifs(); });
     });
     var badge = $("notif-count");
     badge.hidden = !unread; badge.textContent = unread;
@@ -1547,7 +1799,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   $("notif-close").addEventListener("click", function(){ setDrawer(false); });
   scrim.addEventListener("click", function(){ setDrawer(false); });
   $("notif-read").addEventListener("click", function(){
-    NOTIFS.forEach(function(n){ n.unread = false; }); renderNotifs(); $("notif-close").focus();
+    allNotifs().forEach(function(n){ n.unread = false; if(n.read) n.read(); }); renderNotifs(); $("notif-close").focus();
   });
   document.addEventListener("keydown", function(ev){
     if(!document.body.classList.contains("notif-open")) return;
@@ -1559,6 +1811,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     }
   });
   renderNotifs();
+  checkAlerts();
   $("contact-form").addEventListener("submit", function(ev){
     ev.preventDefault();
     var need = [["c-subject","Enter a subject."],["c-name","Enter your full name."],["c-message","Write your message."]], first = null;
@@ -1578,10 +1831,10 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   var signup = false;
   $("mode-switch").addEventListener("click", function(){
     signup = !signup;
-    $("login-title").textContent = signup ? "Create your account" : "Sign in to cultt";
+    $("login-title").textContent = signup ? "Create your account" : "Sign in to culttt";
     $("login-sub").textContent = signup ? "Save products from any shop and keep them in one list." : "Keep your wishlist on every device.";
     $("e-submit").textContent = signup ? "Create account" : "Sign in with email";
-    $("switch-text").textContent = signup ? "Already have an account?" : "New to cultt?";
+    $("switch-text").textContent = signup ? "Already have an account?" : "New to culttt?";
     $("mode-switch").textContent = signup ? "Sign in" : "Create an account";
     $("e-pass").setAttribute("autocomplete", signup ? "new-password" : "current-password");
     $("e-pass-hint").hidden = !signup;

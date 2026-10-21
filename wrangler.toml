@@ -3,3 +3,15 @@
 name = "wishlist"
 main = "backend/worker.js"
 compatibility_date = "2026-06-01"
+
+# Re-checks prices for price drop alerts every 6 hours.
+[triggers]
+crons = ["0 */6 * * *"]
+
+# Storage for price drop alerts. Until this is set up, the alert routes answer
+# "alerts_unavailable" and the page can't save alerts. To turn it on, run
+#   npx wrangler kv namespace create ALERTS
+# then uncomment these lines and paste the id it prints.
+# [[kv_namespaces]]
+# binding = "ALERTS"
+# id = "<paste the namespace id here>"

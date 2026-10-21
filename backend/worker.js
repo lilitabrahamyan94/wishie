@@ -1,4 +1,4 @@
-// cultt product lookup — Cloudflare Worker.
+// culttt product lookup — Cloudflare Worker.
 //
 // GET /product?url=<https product page>
 //   -> { ok: true, product: { url, shop, name, category, color, price, currency,
@@ -8,6 +8,17 @@
 //
 // It opens the product page, reads the structured product data shops publish
 // for search engines (JSON-LD, then Open Graph tags), and returns it as JSON.
+//
+// Price drop alerts (stored in the ALERTS KV namespace, keyed by a random UUID
+// the browser makes, which only that browser knows):
+//
+// PUT    /alerts/<id>   body { url, target, currency }  -> { ok: true, alert }
+// DELETE /alerts/<id>                                    -> { ok: true }
+// GET    /alerts?ids=<id>,<id>,…  (up to 50)             -> { ok: true, alerts: { <id>: alert } }
+//   alert = { target, currency, lastPrice, lastCheckedAt, hitAt }
+//
+// A cron trigger (wrangler.toml) re-checks the alerts whose price was checked
+// longest ago and sets hitAt the first time the price is at or below target.
 
 // Websites allowed to call this backend from a browser.
 const ALLOWED_ORIGINS = [
@@ -23,17 +34,24 @@ const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
   "(KHTML, like Gecko) Chrome/126.0 Safari/537.36";
 
+const ALERT_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const MAX_ALERT_BODY = 4096;
+const MAX_IDS = 50;
+const CHECKS_PER_RUN = 40;
+const CHECK_CONCURRENCY = 5;
+
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const origin = request.headers.get("Origin") || "";
     const cors = corsHeaders(origin);
 
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
     if (origin && !ALLOWED_ORIGINS.includes(origin)) return json({ ok: false, error: "origin_not_allowed" }, 403, cors);
-    if (request.method !== "GET") return json({ ok: false, error: "method_not_allowed" }, 405, cors);
 
     const here = new URL(request.url);
+    if (here.pathname === "/alerts" || here.pathname.startsWith("/alerts/")) return handleAlerts(request, here, env, cors);
     if (here.pathname !== "/product") return json({ ok: false, error: "not_found" }, 404, cors);
+    if (request.method !== "GET") return json({ ok: false, error: "method_not_allowed" }, 405, cors);
 
     const target = safeUrl(here.searchParams.get("url"));
     if (!target) return json({ ok: false, error: "bad_url" }, 400, cors);
@@ -46,12 +64,125 @@ export default {
 
     return json({ ok: true, product }, 200, { ...cors, "Cache-Control": "public, max-age=900" });
   },
+
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(checkAlerts(env));
+  },
 };
+
+// ---------- price alerts ----------
+
+async function handleAlerts(request, here, env, cors) {
+  if (!env || !env.ALERTS) return json({ ok: false, error: "alerts_unavailable" }, 503, cors);
+  const noStore = { ...cors, "Cache-Control": "no-store" };
+
+  if (here.pathname === "/alerts") {
+    if (request.method !== "GET") return json({ ok: false, error: "method_not_allowed" }, 405, cors);
+    const ids = [...new Set(String(here.searchParams.get("ids") || "").split(","))]
+      .filter((id) => ALERT_ID.test(id)).slice(0, MAX_IDS);
+    const found = await Promise.all(ids.map((id) => env.ALERTS.get("alert:" + id, "json")));
+    const alerts = {};
+    ids.forEach((id, n) => { if (found[n]) alerts[id] = publicAlert(found[n]); });
+    return json({ ok: true, alerts }, 200, noStore);
+  }
+
+  const id = here.pathname.slice("/alerts/".length);
+  if (!ALERT_ID.test(id)) return json({ ok: false, error: "bad_id" }, 400, cors);
+  const key = "alert:" + id;
+
+  if (request.method === "DELETE") {
+    await env.ALERTS.delete(key);
+    return json({ ok: true }, 200, noStore);
+  }
+  if (request.method !== "PUT") return json({ ok: false, error: "method_not_allowed" }, 405, cors);
+
+  const raw = await request.text();
+  if (raw.length > MAX_ALERT_BODY) return json({ ok: false, error: "too_large" }, 413, cors);
+  let body;
+  try { body = JSON.parse(raw); } catch (e) { return json({ ok: false, error: "bad_json" }, 400, cors); }
+  const url = safeUrl(body && body.url);
+  const target = Number(body && body.target);
+  const currency = /^[A-Za-z]{3}$/.test(String((body && body.currency) || "")) ? body.currency.toUpperCase() : "USD";
+  if (!url) return json({ ok: false, error: "bad_url" }, 400, cors);
+  if (!Number.isFinite(target) || target <= 0 || target > 1e7) return json({ ok: false, error: "bad_target" }, 400, cors);
+
+  const old = await env.ALERTS.get(key, "json");
+  const same = old && old.url === url.href && old.target === target;
+  const alert = {
+    url: url.href,
+    target,
+    currency,
+    createdAt: (old && old.createdAt) || new Date().toISOString(),
+    lastPrice: old && old.url === url.href ? old.lastPrice : null,
+    lastCheckedAt: old && old.url === url.href ? old.lastCheckedAt : null,
+    hitAt: same ? old.hitAt : null,
+  };
+  await env.ALERTS.put(key, JSON.stringify(alert));
+  return json({ ok: true, alert: publicAlert(alert) }, 200, noStore);
+}
+
+function publicAlert(a) {
+  return {
+    target: a.target,
+    currency: a.currency,
+    lastPrice: typeof a.lastPrice === "number" ? a.lastPrice : null,
+    lastCheckedAt: a.lastCheckedAt || null,
+    hitAt: a.hitAt || null,
+  };
+}
+
+async function checkAlerts(env) {
+  if (!env || !env.ALERTS) return;
+  const keys = [];
+  let cursor;
+  do {
+    const page = await env.ALERTS.list({ prefix: "alert:", cursor });
+    keys.push(...page.keys.map((k) => k.name));
+    cursor = page.list_complete ? null : page.cursor;
+  } while (cursor);
+
+  const loaded = (await Promise.all(keys.map(async (key) => ({ key, alert: await env.ALERTS.get(key, "json") }))))
+    .filter((x) => x.alert && x.alert.url);
+  loaded.sort((a, b) => String(a.alert.lastCheckedAt || "").localeCompare(String(b.alert.lastCheckedAt || "")));
+  const queue = loaded.slice(0, CHECKS_PER_RUN);
+
+  const worker = async () => {
+    for (let job = queue.shift(); job; job = queue.shift()) {
+      try { await checkOne(env, job.key, job.alert); } catch (e) {}
+    }
+  };
+  await Promise.all(Array.from({ length: CHECK_CONCURRENCY }, worker));
+}
+
+async function checkOne(env, key, alert) {
+  const now = new Date().toISOString();
+  const target = safeUrl(alert.url);
+  let product = null;
+  if (target) {
+    const page = await loadPage(target);
+    if (page.ok) product = extract(page.html, page.url);
+  }
+  // The alert may have been edited or removed while the page loaded.
+  const latest = await env.ALERTS.get(key, "json");
+  if (!latest || latest.url !== alert.url || latest.target !== alert.target) return;
+  latest.lastCheckedAt = now;
+  if (product && typeof product.price === "number") {
+    latest.lastPrice = product.price;
+    if (product.currency) latest.currency = product.currency;
+    if (!latest.hitAt && product.price <= latest.target) latest.hitAt = now;
+  }
+  await env.ALERTS.put(key, JSON.stringify(latest));
+}
 
 // ---------- request handling ----------
 
 function corsHeaders(origin) {
-  const h = { "Access-Control-Allow-Methods": "GET, OPTIONS", "Access-Control-Max-Age": "86400", Vary: "Origin" };
+  const h = {
+    "Access-Control-Allow-Methods": "GET, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  };
   if (ALLOWED_ORIGINS.includes(origin)) h["Access-Control-Allow-Origin"] = origin;
   return h;
 }
