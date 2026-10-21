@@ -20,14 +20,10 @@ Every 6 hours a cron trigger re-checks up to 40 alerts, starting with the ones c
 longest ago, and sets `hitAt` the first time the price is at or below the target.
 Changing an alert's target clears `hitAt`.
 
-## Turn on price alerts (once)
+## Alert storage
 
-Alerts are stored in Workers KV. Create the namespace with your Cloudflare account:
-
-    npx wrangler kv namespace create ALERTS
-
-Then uncomment the `[[kv_namespaces]]` lines in `wrangler.toml`, paste the id it printed,
-and push. Until then the alert routes answer `"alerts_unavailable"` and the page says the
+Alerts are stored in the Workers KV namespace `ALERTS`, bound in `wrangler.toml`. If the
+binding is missing, the alert routes answer `"alerts_unavailable"` and the page says the
 alert wasn't saved.
 
 To test the schedule locally: `npx wrangler dev --test-scheduled`, then open

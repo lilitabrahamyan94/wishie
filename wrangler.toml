@@ -8,10 +8,7 @@ compatibility_date = "2026-06-01"
 [triggers]
 crons = ["0 */6 * * *"]
 
-# Storage for price drop alerts. Until this is set up, the alert routes answer
-# "alerts_unavailable" and the page can't save alerts. To turn it on, run
-#   npx wrangler kv namespace create ALERTS
-# then uncomment these lines and paste the id it prints.
-# [[kv_namespaces]]
-# binding = "ALERTS"
-# id = "<paste the namespace id here>"
+# Storage for price drop alerts (KV namespace "ALERTS").
+[[kv_namespaces]]
+binding = "ALERTS"
+id = "ac4c3c5b8d8f448687bbc6f2b7c56851"
