@@ -18,17 +18,19 @@ node --check backend/worker.js                 # syntax check the worker
 npx wrangler dev --test-scheduled              # run the worker locally (http://localhost:8787)
 curl http://localhost:8787/__scheduled         # trigger the cron handler locally
 npx wrangler deploy                            # manual deploy (normally done by pushing to main)
+python3 -m http.server 8000                    # preview the page at http://localhost:8000
 ```
 
-To preview the page, serve the repo root over HTTP on port 8000. `ALLOWED_ORIGINS` in `worker.js` only accepts `https://lilitabrahamyan94.github.io` and `localhost`/`127.0.0.1:8000`, so other origins can't call the live worker.
+Serve the page on port 8000: `ALLOWED_ORIGINS` in `worker.js` only accepts `https://lilitabrahamyan94.github.io` and `localhost`/`127.0.0.1:8000`, so other origins can't call the worker. The page calls the worker at `API_URL` in `index.html` (the live `workers.dev` address); to test against `wrangler dev`, point it at `http://localhost:8787` temporarily and don't commit that. With `API_URL` empty the page saves links without details and skips alerts.
 
 ## Frontend architecture (`index.html`)
 
 - **Views** are sections with ids `view-<name>`, switched by `location.hash` in `show()`; the list is the `VIEWS` array. Header links have ids `nav-<name>`.
 - **Theme**: CSS custom properties on `:root`, redefined for dark mode both under `@media (prefers-color-scheme:dark)` (guarded by `:root:not([data-theme="light"])`) and under `:root[data-theme="dark"]`. New colors need all three places. The tiny `<script>` in `<head>` applies the saved theme before paint.
+- **Sizing**: every spacing, size, radius and line height is on the 4/8px grid (multiples of 4, 8 between components; touch targets 48px), using the `--space-*` tokens on `:root` (`--space-1` = 8px, `--space-3` = 24px). The project skill `.claude/skills/sizing-4-8-grid` has the full rules.
 - **Breakpoint** is 760px (`max-width:760px` / `min-width:761px`). Controls that are hover-revealed on desktop use `@media (hover:hover){ opacity:0 }` plus `.card:hover`/`:focus-visible`, so they stay visible on touch (see `.rm` and `.alertbtn`).
 - **Data source**: `items` comes from one of two places. If `window.claude.use("db")` exists (when hosted as a Claude artifact), it reads the shared `items` collection via `onSnapshot`, and writes use `store.doc(...)`/`store.collection(...)`. Otherwise `goLocal()` merges the hard-coded `SEED` array with links saved in localStorage. Code that changes items must handle both (`local` flag vs `store`).
-- **localStorage keys**: `wishlist.added` (user-added items), `wishlist.removed` (ids hidden from SEED), `wishlist.alerts` (`{itemId: {id, target, seenHit}}`), `wishie-theme`, `wishie-user`. Every access is wrapped in try/catch.
+- **localStorage keys**: `wishlist.added` (user-added items), `wishlist.removed` (ids hidden from SEED), `wishlist.alerts` (`{itemId: {id, target, seenHit}}`), `wishie-theme`, `wishie-user` (there are no real accounts: a stored user just marks the visitor as signed in for the profile menu). Every access is wrapped in try/catch.
 - **Rendering**: `render()` rebuilds filters, the product grid and (via `renderNotifs()`) the notification drawer from `items`. DOM is built with the `el(tag, cls, text)` helper and `$()` = `getElementById`; untrusted strings go through `textContent`, never `innerHTML`, and URLs through `safeUrl()`.
 - **Dialogs** (notification drawer, price alert dialog) follow one pattern: a scrim + panel with `hidden`, a `body.<name>-open` class to animate, Escape to close, a Tab focus trap, and focus returned to the opener.
 - **Sample content** (coupons, ads, `NOTIFS`, `SEED`) is placeholder data for testing, labelled as such in the UI.
@@ -37,7 +39,7 @@ To preview the page, serve the repo root over HTTP on port 8000. `ALLOWED_ORIGIN
 ## Backend architecture (`backend/worker.js`)
 
 - `GET /product?url=` fetches the shop page and extracts product data from JSON-LD, falling back to Open Graph meta tags (`loadPage()` → `extract()`). Many shops (Calvin Klein and COS in testing) block server requests, so lookups often return `blocked` and the page saves the link without details.
-- **Price alerts**: `PUT`/`DELETE /alerts/<uuid>` and `GET /alerts?ids=` store alerts in the `ALERTS` KV namespace under `alert:<uuid>`. The UUID is generated in the browser and acts as the only credential (there are no user accounts yet). The `scheduled()` cron (every 6 hours, in `wrangler.toml`) re-checks up to 40 alerts per run, oldest first, reusing `loadPage()`/`extract()`, and sets `hitAt` the first time price ≤ target. The page polls `GET /alerts` on load and shows hits in the notification drawer; there is no email or push delivery.
+- **Price alerts**: `PUT`/`DELETE /alerts/<uuid>` and `GET /alerts?ids=` store alerts in the `ALERTS` KV namespace under `alert:<uuid>`. The UUID is generated in the browser and acts as the only credential (there are no user accounts yet). The `scheduled()` cron (every 6 hours, in `wrangler.toml`) re-checks up to 40 alerts per run, oldest first, reusing `loadPage()`/`extract()`, and sets `hitAt` the first time price ≤ target. The page polls `GET /alerts` on load and shows hits in the notification drawer; there is no email or push delivery. Without the `ALERTS` binding the alert routes answer `alerts_unavailable`. `backend/README.md` documents the request/response shapes and error codes; keep it in sync when the API changes.
 - `safeUrl()` restricts outgoing fetches to public https hosts (no IPs, ports or local names). Keep using it for any URL that comes from a client.
 
 ## Content pages
