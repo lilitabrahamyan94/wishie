@@ -204,6 +204,10 @@ a.open{color:var(--ink);font-size:13px;font-weight:500;text-underline-offset:3px
 .home-coupons,.home-recent{max-width:1240px;margin:0 auto;padding:var(--space-6) var(--space-3)}
 .home-recent{padding-bottom:0}
 .home-recent[hidden]{display:none}
+.home-recent .grid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:max(128px,calc((100% - 7 * var(--space-2)) / 8));gap:var(--space-2);
+  overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.home-recent .grid::-webkit-scrollbar{display:none}
+.home-recent .card{scroll-snap-align:start}
 .sechead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2);margin-bottom:var(--space-3)}
 .sechead h2{margin:0;font-family:"Outfit","Schibsted Grotesk",sans-serif;font-weight:400;font-size:32px;line-height:36px;letter-spacing:-0.02em}
 .sechead a{font-weight:700;color:var(--ink);text-underline-offset:4px;white-space:nowrap}
