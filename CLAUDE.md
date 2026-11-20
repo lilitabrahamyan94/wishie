@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-culttt (repo name `wishie`; the brand was renamed wishie → cultt → culttt, and the old name survives in localStorage keys like `wishie-theme`) is a single-page wishlist: users paste product links from any shop and see photo, price and stock in one list, plus coupons, notifications and price drop alerts.
+wishie (the brand went wishie → cultt → culttt and back to wishie) is a single-page wishlist: users paste product links from any shop and see photo, price and stock in one list, plus coupons, notifications and price drop alerts.
 
 There is no build step, package.json, linter or test suite. Two deployables:
 
@@ -26,11 +26,13 @@ Serve the page on port 8000: `ALLOWED_ORIGINS` in `worker.js` only accepts `http
 ## Frontend architecture (`index.html`)
 
 - **Views** are sections with ids `view-<name>`, switched by `location.hash` in `show()`; the list is the `VIEWS` array. Header links have ids `nav-<name>`.
-- **Theme**: CSS custom properties on `:root`, redefined for dark mode both under `@media (prefers-color-scheme:dark)` (guarded by `:root:not([data-theme="light"])`) and under `:root[data-theme="dark"]`. New colors need all three places. The tiny `<script>` in `<head>` applies the saved theme before paint.
+- **Colors**: CSS custom properties on `:root`, light only (dark mode was removed). `--brand` (#CDFD02) is the logo symbol and hero button color.
+- **Header** (`nav.top`): a sticky, transparent bar 16px from the top and 24px from each side (`pointer-events:none`) holding two separate 48px frosted-glass pills (`backdrop-filter`) that hug their contents: `.tl` on the left (logo and menu) and `.profile` on the right (profile icon and notifications). Below 400px the logo text is visually hidden so it fits. The home view has `margin-top:-64px` so the 400px hero photo starts under the header. The hero's `#hero-add` form passes its link to the wishlist's `#add` form and switches to `#wishlist`.
+- **Home "Newly added"**: `renderRecent()` (called from `render()`) shows the 8 newest items by `addedAt` in `#recent-grid`. Both grids build cards with `productCard(i, preview)`; previews have no remove button.
 - **Sizing**: every spacing, size, radius and line height is on the 4/8px grid (multiples of 4, 8 between components; touch targets 48px), using the `--space-*` tokens on `:root` (`--space-1` = 8px, `--space-3` = 24px). The project skill `.claude/skills/sizing-4-8-grid` has the full rules.
 - **Breakpoint** is 760px (`max-width:760px` / `min-width:761px`). Controls that are hover-revealed on desktop use `@media (hover:hover){ opacity:0 }` plus `.card:hover`/`:focus-visible`, so they stay visible on touch (see `.rm` and `.alertbtn`).
 - **Data source**: `items` comes from one of two places. If `window.claude.use("db")` exists (when hosted as a Claude artifact), it reads the shared `items` collection via `onSnapshot`, and writes use `store.doc(...)`/`store.collection(...)`. Otherwise `goLocal()` merges the hard-coded `SEED` array with links saved in localStorage. Code that changes items must handle both (`local` flag vs `store`).
-- **localStorage keys**: `wishlist.added` (user-added items), `wishlist.removed` (ids hidden from SEED), `wishlist.alerts` (`{itemId: {id, target, seenHit}}`), `wishie-theme`, `wishie-user` (there are no real accounts: a stored user just marks the visitor as signed in for the profile menu). Every access is wrapped in try/catch.
+- **localStorage keys**: `wishlist.added` (user-added items), `wishlist.removed` (ids hidden from SEED), `wishlist.alerts` (`{itemId: {id, target, seenHit}}`), `wishie-user` (there are no real accounts: a stored user just marks the visitor as signed in for the profile menu). Every access is wrapped in try/catch.
 - **Rendering**: `render()` rebuilds filters, the product grid and (via `renderNotifs()`) the notification drawer from `items`. DOM is built with the `el(tag, cls, text)` helper and `$()` = `getElementById`; untrusted strings go through `textContent`, never `innerHTML`, and URLs through `safeUrl()`.
 - **Dialogs** (notification drawer, price alert dialog) follow one pattern: a scrim + panel with `hidden`, a `body.<name>-open` class to animate, Escape to close, a Tab focus trap, and focus returned to the opener.
 - **Sample content** (coupons, ads, `NOTIFS`, `SEED`) is placeholder data for testing, labelled as such in the UI.

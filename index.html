@@ -3,41 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>culttt</title>
+<title>wishie</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<script>
-(function(){
-  try{ var t = localStorage.getItem("wishie-theme"); if(t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); }catch(e){}
-})();
-</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400&display=swap">
 <style>
 :root{
   --paper:#FFFFFF; --surface:#FFFFFF; --ink:#1A2233; --muted:#667085; --line:#D5D9E0;
   --plate:#DDE2EA; --in:#17694A; --in-bg:#DDF1E7; --out:#9A2B2B; --out-bg:#F6E0DE;
-  --low:#8A5A00; --low-bg:#F7EBCB; --unk:#555E6E; --unk-bg:#E3E6EB; --focus:#2B4BD6; --accent:#2B4BD6; --on-accent:#FFFFFF;
+  --low:#8A5A00; --low-bg:#F7EBCB; --unk:#555E6E; --unk-bg:#E3E6EB; --focus:#2B4BD6; --accent:#2B4BD6; --on-accent:#FFFFFF; --brand:#CDFD02;
   --space-0_5:.25rem; --space-1:.5rem; --space-1_5:.75rem; --space-2:1rem; --space-3:1.5rem;
   --space-4:2rem; --space-5:2.5rem; --space-6:3rem; --space-8:4rem; --space-12:6rem;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --paper:#12161F; --surface:#1B212D; --ink:#E9ECF2; --muted:#98A2B3; --line:#2D3545;
-    --plate:#252D3C; --in:#7FD6AE; --in-bg:#173A2C; --out:#F0A29C; --out-bg:#452221;
-    --low:#EBC66A; --low-bg:#43361A; --unk:#B4BCCB; --unk-bg:#2A3140; --focus:#8FA6FF; --accent:#4F6BEB; --on-accent:#FFFFFF;
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#12161F; --surface:#1B212D; --ink:#E9ECF2; --muted:#98A2B3; --line:#2D3545;
-  --plate:#252D3C; --in:#7FD6AE; --in-bg:#173A2C; --out:#F0A29C; --out-bg:#452221;
-  --low:#EBC66A; --low-bg:#43361A; --unk:#B4BCCB; --unk-bg:#2A3140; --focus:#8FA6FF; --accent:#4F6BEB; --on-accent:#FFFFFF;
-}
-:root{color-scheme:light dark}
-:root[data-theme="light"]{color-scheme:light}
-:root[data-theme="dark"]{color-scheme:dark}
+:root{color-scheme:light}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--paper);color:var(--ink);
@@ -50,7 +31,7 @@ h1{font-size:34px;line-height:40px;font-weight:700;letter-spacing:-0.02em;margin
 .summary{color:var(--muted);margin:0}
 .summary b{color:var(--in);font-weight:600}
 .layout{display:grid;grid-template-columns:224px minmax(0,1fr);gap:var(--space-5);align-items:start}
-aside{position:sticky;top:calc(80px + env(safe-area-inset-top,0px));max-height:calc(100vh - 96px);overflow-y:auto;scrollbar-width:none}
+aside{position:sticky;top:calc(88px + env(safe-area-inset-top,0px));max-height:calc(100vh - 104px);overflow-y:auto;scrollbar-width:none}
 aside::-webkit-scrollbar,.fbody::-webkit-scrollbar{display:none}
 .fbody{scrollbar-width:none}
 fieldset{border:0;padding:0;margin:0 0 var(--space-4);min-width:0}
@@ -154,31 +135,43 @@ a.open{color:var(--ink);font-size:13px;font-weight:500;text-underline-offset:3px
 .add button:disabled{opacity:.5;cursor:default}
 .add-msg{font-size:13px;min-height:20px;margin:var(--space-1) 0 var(--space-3);color:var(--muted)}
 .add-msg.err{color:var(--out)}
-.top{position:sticky;top:0;z-index:20;background:var(--paper);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:var(--space-0_5);padding:var(--space-1) var(--space-3);
-  border-bottom:1px solid var(--line)}
+.top{position:sticky;top:var(--space-2);z-index:20;height:48px;margin:var(--space-2) var(--space-3) 0;display:flex;align-items:center;justify-content:space-between;gap:var(--space-1);
+  pointer-events:none}
+.top .tl,.top .profile{height:48px;border-radius:999px;pointer-events:auto;
+  background:rgba(255,255,255,.64);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid rgba(255,255,255,.48);box-shadow:0 8px 24px rgba(26,34,51,.12)}
+.top .tl{display:flex;align-items:center;gap:var(--space-1);min-width:0;padding:0 var(--space-1) 0 var(--space-3)}
+.top .profile{padding:0 var(--space-2) 0 var(--space-1)}
+.top .pbtn,.top .bell,.top .bell:hover{color:#000000}
+.top .bell:hover,.top .bell[aria-expanded="true"]{background:none}
 .top a{display:inline-flex;align-items:center;gap:var(--space-1);min-height:48px;padding:0 var(--space-2);border-radius:8px;
   font-weight:600;color:var(--muted);text-decoration:none}
 .top a:hover{color:var(--ink)}
-.top a[aria-current="page"]{color:var(--accent)}
-.top a.logo{color:var(--ink);font-weight:700;font-size:19px;line-height:24px;letter-spacing:-0.02em;padding:0 var(--space-2) 0 0;margin-right:var(--space-1)}
-.top a.logo svg{color:var(--accent)}
+.top a[aria-current="page"]{color:var(--ink)}
+.top a.logo{color:#000000;font-weight:700;font-size:20px;line-height:24px;letter-spacing:-0.02em;padding:0 var(--space-2) 0 0}
 .top .menu{display:flex;gap:var(--space-0_5)}
-.top a.logo{justify-self:start}
-.top .profile{justify-self:end;padding-left:var(--space-1)}
-.avatar{width:32px;height:32px;border-radius:50%;background:var(--plate);color:var(--ink);
-  display:grid;place-items:center;flex:none}
+.top .menu a{font-size:13px}
+.avatar{display:grid;place-items:center;flex:none}
 .home{width:100%;overflow:hidden;padding-bottom:var(--space-0_5)}
 .banner{position:relative;overflow:hidden;color:#FFFFFF;font-family:"Outfit","Schibsted Grotesk",ui-sans-serif,system-ui,sans-serif}
 .banner img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
 .banner::after{content:"";position:absolute;inset:0;pointer-events:none}
-.banner.hero{height:max(384px,38.9vw)}
-.banner.hero img{object-position:70% 30%}
-.banner.hero::after{background:linear-gradient(90deg,rgba(0,0,0,.6),rgba(0,0,0,0) 60%)}
+.home{margin-top:-64px}
+.banner.hero{height:400px;display:grid;place-items:center}
+.banner.hero img{object-position:50% 31%}
+.banner.hero::after{background:rgba(0,0,0,.08)}
+.hadd{position:relative;z-index:1;width:clamp(320px,50%,720px);max-width:calc(100% - 32px);font-family:"Schibsted Grotesk",ui-sans-serif,system-ui,sans-serif}
+.hadd input{width:100%;min-height:56px;padding:0 64px 0 var(--space-3);border:0;border-radius:16px;background:#FFFFFF;color:var(--ink);
+  font:inherit;font-size:16px;box-shadow:0 8px 32px rgba(0,0,0,.24)}
+.hadd input::placeholder{color:var(--muted)}
+.hadd input:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.hadd button{position:absolute;right:var(--space-1);top:var(--space-1);bottom:var(--space-1);width:40px;padding:0;border:0;border-radius:8px;
+  background:var(--brand);color:#000000;cursor:pointer;display:grid;place-items:center}
+.hadd button:hover{opacity:.88}
 .banner.tile{min-width:0;height:max(320px,25vw)}
 .banner.tile::after{background:linear-gradient(0deg,rgba(0,0,0,.66),rgba(0,0,0,0) 62%)}
 .duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px}
 .banner .copy{position:absolute;z-index:1}
-.hero .copy{left:2.1%;bottom:9%;max-width:min(680px,62%)}
 .tile .copy{left:4%;right:4%;bottom:8%}
 .banner h2{margin:0;font-weight:300;font-size:clamp(32px,4.3vw,90px);line-height:1.02;letter-spacing:-0.035em}
 .tile h2{font-size:clamp(28px,2.9vw,58px)}
@@ -208,7 +201,9 @@ a.open{color:var(--ink);font-size:13px;font-weight:500;text-underline-offset:3px
 .chip:hover{border-color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
 .chip .n{margin-left:var(--space-1);opacity:.65;font-variant-numeric:tabular-nums}
-.home-coupons{max-width:1240px;margin:0 auto;padding:var(--space-6) var(--space-3)}
+.home-coupons,.home-recent{max-width:1240px;margin:0 auto;padding:var(--space-6) var(--space-3)}
+.home-recent{padding-bottom:0}
+.home-recent[hidden]{display:none}
 .sechead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2);margin-bottom:var(--space-3)}
 .sechead h2{margin:0;font-family:"Outfit","Schibsted Grotesk",sans-serif;font-weight:400;font-size:32px;line-height:36px;letter-spacing:-0.02em}
 .sechead a{font-weight:700;color:var(--ink);text-underline-offset:4px;white-space:nowrap}
@@ -216,16 +211,15 @@ a.open{color:var(--ink);font-size:13px;font-weight:500;text-underline-offset:3px
 @media (max-width:760px){
   .duo{grid-template-columns:minmax(0,1fr)}
   .banner.tile{height:320px}
-  .banner.hero{height:464px}
-  .banner.hero::after{background:linear-gradient(0deg,rgba(0,0,0,.7),rgba(0,0,0,0) 70%)}
-  .hero .copy{left:var(--space-2);right:var(--space-2);bottom:var(--space-3);max-width:none}
+  .banner.hero img{object-position:40% 100%}
   .tile .copy{left:var(--space-2);right:var(--space-2);bottom:var(--space-2)}
   .banner.t2 img{object-position:72% 50%}
-  .home-coupons{padding:var(--space-4) var(--space-2) var(--space-5)}
+  .home-coupons,.home-recent{padding:var(--space-4) var(--space-2) var(--space-5)}
+  .home-recent{padding-bottom:0}
   .sechead h2{font-size:26px;line-height:32px}
 }
 .note{color:var(--muted);font-size:13px;margin:var(--space-3) 0 0}
-@media (max-width:760px){.top{padding:var(--space-1);gap:0}.top a{padding:0 var(--space-1);gap:var(--space-1);font-size:14px}.top a.logo{font-size:15px;margin-right:0;padding:0 var(--space-1) 0 0;gap:var(--space-1)}.top a.logo svg{width:12px;height:11px}.top .profile{padding-left:var(--space-0_5)}}
+@media (max-width:760px){.top{gap:var(--space-1)}.top .tl{gap:0;padding:0 var(--space-0_5) 0 var(--space-2)}.top .profile{padding:0 var(--space-2) 0 var(--space-0_5)}.top .menu{gap:0}.top a{padding:0 var(--space-1);font-size:14px}.top .menu a{font-size:12px}.pbtn{min-width:40px}.top a.logo{font-size:16px;padding:0 var(--space-1) 0 0;gap:var(--space-0_5)}.top a.logo svg{width:12px;height:12px}}
 .head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,480px);column-gap:var(--space-3);
   grid-template-areas:"title add" "sum add";align-items:start;
   margin-bottom:var(--space-2)}
@@ -251,7 +245,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .foot-bar li a{display:flex;align-items:center;min-height:48px;font-size:14px}
 .foot-bar .rights{margin:var(--space-3) 0 0;padding-top:var(--space-3);border-top:1px solid #2A2A2A;color:#9AA3B2;font-size:13px}
 .top .profile{position:relative}
-.pbtn{display:inline-flex;align-items:center;gap:var(--space-1);min-height:48px;padding:0 var(--space-2);border:0;background:none;
+.pbtn{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;padding:0;border:0;background:none;
   border-radius:8px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer}
 .pbtn:hover,.pbtn[aria-expanded="true"]{color:var(--ink)}
 .pbtn[aria-current="page"]{color:var(--accent)}
@@ -263,19 +257,12 @@ body{display:flex;flex-direction:column;min-height:100vh}
   font:inherit;font-size:15px;font-weight:500;color:var(--ink);background:none;border:0;text-align:left;
   text-decoration:none;cursor:pointer}
 .top .pop a:hover,.pop button:hover{background:var(--plate)}
-@media (max-width:760px){.pbtn{padding:0 var(--space-1);gap:var(--space-1);font-size:14px}}
 .top .profile{display:flex;align-items:center;gap:var(--space-0_5)}
 .tbtn{display:grid;place-items:center;width:48px;height:48px;padding:0;border:0;border-radius:8px;background:none;
   color:var(--muted);cursor:pointer}
 .tbtn:hover{color:var(--ink);background:var(--plate)}
-.tbtn .sun{display:none}
-:root[data-theme="dark"] .tbtn .sun{display:block}
-:root[data-theme="dark"] .tbtn .moon{display:none}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .tbtn .sun{display:block}
-  :root:not([data-theme="light"]) .tbtn .moon{display:none}
-}
 @media (max-width:760px){.tbtn{width:40px}}
+@media (max-width:400px){.top .menu a{padding:0 var(--space-0_5)}.top a.logo span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
 .bell{position:relative}
 .bell[aria-expanded="true"]{color:var(--ink);background:var(--plate)}
 .nbadge{position:absolute;top:var(--space-1);left:calc(50% + var(--space-0_5));min-width:16px;height:16px;padding:0 var(--space-0_5);border-radius:99px;
@@ -315,10 +302,6 @@ body.notif-open .ndrawer{transform:none}
 .nfoot{margin:0;padding:var(--space-1_5) var(--space-3);border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:reduce){.nscrim,.ndrawer{transition:none}}
 @media (max-width:760px){
-  .top{grid-template-columns:1fr auto;grid-template-areas:"logo profile" "menu menu"}
-  .top a.logo{grid-area:logo}
-  .top .profile{grid-area:profile}
-  .top .menu{grid-area:menu;justify-content:center}
 }
 .toprow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-0_5) var(--space-1);flex-wrap:wrap}
 .toprow .checked{white-space:nowrap}
@@ -421,14 +404,13 @@ body.notif-open .ndrawer{transform:none}
   text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .linkbtn:hover{color:var(--accent)}
 body.on-login .foot-bar{display:none}
-body.on-login .top{border-bottom:0}
+body.on-login .top .tl{border-color:transparent}
 body.on-login .top .profile,body.on-login .top .menu{display:none}
 @media (min-width:761px){
-  body.on-login .top{position:absolute;left:0;right:0;background:transparent;grid-template-columns:50% 1fr auto}
-  body.on-login .top a.logo,body.on-login .top a.logo svg{color:#FFFFFF}
-  body.on-login .top a.logo svg rect{fill:#FFFFFF}
+  body.on-login .top{position:absolute;top:0;left:0;right:0}
+  body.on-login .top .tl{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}
+  body.on-login .top a.logo{color:#FFFFFF}
   body.on-login .top a.logo:focus-visible{outline-color:#FFFFFF}
-  body.on-login .top .menu{justify-self:start;padding-left:clamp(4px,3vw,48px)}
 }
 @media (max-width:760px){
   .login{grid-template-columns:minmax(0,1fr);min-height:0}
@@ -484,27 +466,24 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
 </head>
 <body>
 <nav class="top" aria-label="Main">
-  <a href="#home" class="logo" aria-label="culttt, home">
-    <svg width="15" height="14" viewBox="3.5 4.5 15 14" aria-hidden="true"><defs><clipPath id="heart-clip"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z"/></clipPath></defs><g clip-path="url(#heart-clip)"><rect x="3" y="3" width="16" height="17" fill="#7B2CBF"/></g></svg>
-    <span>culttt</span>
-  </a>
-  <div class="menu">
-    <a href="#home" id="nav-home">Home</a>
-    <a href="#wishlist" id="nav-wishlist">Wishlist</a>
-    <a href="#coupons" id="nav-coupons">Coupons</a>
+  <div class="tl">
+    <a href="#home" class="logo" aria-label="wishie, home">
+      <svg width="15" height="14" viewBox="3.5 4.5 15 14" aria-hidden="true"><defs><clipPath id="heart-clip"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z"/></clipPath></defs><g clip-path="url(#heart-clip)"><rect x="3" y="3" width="16" height="17" fill="#CDFD02"/></g></svg>
+      <span>wishie</span>
+    </a>
+    <div class="menu">
+      <a href="#home" id="nav-home">Home</a>
+      <a href="#wishlist" id="nav-wishlist">Wishlist</a>
+      <a href="#coupons" id="nav-coupons">Coupons</a>
+    </div>
   </div>
   <div class="profile">
-    <button type="button" class="tbtn" id="theme-toggle" aria-label="Switch to dark mode">
-      <svg class="moon" width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><path d="M15 10.6A6.300 6.300 0 0 1 7.400 3 6.300 6.300 0 1 0 15 10.600z" fill="currentColor"/></svg>
-      <svg class="sun" width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="3.400" fill="currentColor"/><g stroke="currentColor" stroke-width="1.600" stroke-linecap="round"><path d="M9 1.500v1.800M9 14.700v1.800M1.500 9h1.800M14.700 9h1.800M3.700 3.700l1.300 1.300M13 13l1.300 1.300M3.700 14.300 5 13M13 5l1.300-1.300"/></g></svg>
+    <button type="button" class="pbtn" id="nav-profile" aria-haspopup="true" aria-expanded="false" aria-controls="profile-menu" aria-label="Profile">
+      <span class="avatar" aria-hidden="true"><svg width="20" height="20" viewBox="1.8 2.3 14.4 14.4"><circle cx="9" cy="6.5" r="3" fill="currentColor"/><path d="M3 15.5c.6-3 3-4.5 6-4.5s5.400 1.500 6 4.500z" fill="currentColor"/></svg></span>
     </button>
     <button type="button" class="tbtn bell" id="notif-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="notif-drawer" aria-label="Notifications">
       <svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 1.800a5 5 0 0 0-5 5v2.700L2.600 12.300a.7.7 0 0 0 .6 1.100h11.600a.7.7 0 0 0 .6-1.100L14 9.500V6.800a5 5 0 0 0-5-5z" fill="currentColor"/><path d="M6.900 14.600a2.100 2.100 0 0 0 4.200 0z" fill="currentColor"/></svg>
       <span class="nbadge" id="notif-count" hidden></span>
-    </button>
-    <button type="button" class="pbtn" id="nav-profile" aria-haspopup="true" aria-expanded="false" aria-controls="profile-menu">
-      <span class="avatar" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 18 18"><circle cx="9" cy="6.5" r="3" fill="currentColor"/><path d="M3 15.5c.6-3 3-4.5 6-4.5s5.400 1.500 6 4.500z" fill="currentColor"/></svg></span>
-      <span>Profile</span>
     </button>
     <div class="pop" id="profile-menu" hidden>
       <a href="#login">Sign In</a>
@@ -555,13 +534,26 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
 <div class="home" id="view-home" hidden>
   <h1 class="sr">Promotions</h1>
   <article class="banner hero">
-    <img src="assets/hero.jpg" alt="Generated image: A woman with long dark hair in a black bra, eyes closed, in a warm-lit bedroom">
-    <div class="copy">
-      <h2>The New Perfectly Fit Bra</h2>
-      <p class="sub">The bra that does it all. Experience smooth, customized lift and all-day comfort.</p>
-      <a class="cta" href="#" data-soon>Shop the Campaign</a>
-    </div>
+    <img src="https://images.unsplash.com/photo-1620424037570-15137a4a562d?auto=format&amp;fit=crop&amp;w=1600&amp;q=70"
+      srcset="https://images.unsplash.com/photo-1620424037570-15137a4a562d?auto=format&amp;fit=crop&amp;w=800&amp;q=70 800w,
+        https://images.unsplash.com/photo-1620424037570-15137a4a562d?auto=format&amp;fit=crop&amp;w=1600&amp;q=70 1600w,
+        https://images.unsplash.com/photo-1620424037570-15137a4a562d?auto=format&amp;fit=crop&amp;w=2400&amp;q=70 2400w"
+      sizes="100vw" alt="Close-up of a woman with short natural hair looking up at a pale blue sky. Photo by Belinda Amoah on Unsplash">
+    <form class="hadd" id="hero-add" novalidate>
+      <label class="sr" for="hero-url">Product link</label>
+      <input id="hero-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Paste a product link to save it">
+      <button type="submit" aria-label="Add to wishlist">
+        <svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 3v12M3 9h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      </button>
+    </form>
   </article>
+  <section class="home-recent" id="home-recent" aria-labelledby="home-recent-title" hidden>
+    <div class="sechead">
+      <h2 id="home-recent-title">Newly added</h2>
+      <a href="#wishlist">See more</a>
+    </div>
+    <div class="grid" id="recent-grid"></div>
+  </section>
   <section class="home-coupons" aria-labelledby="home-coupons-title">
     <div class="sechead">
       <h2 id="home-coupons-title">Coupons and Deals</h2>
@@ -639,7 +631,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <div class="split-copy">
     <p class="eyebrow">About us</p>
     <h1>Everything you want, in one place.</h1>
-    <p>culttt is for people who love shopping online and shop in more than one store. Save a product from any shop with its link, and it joins a single list you can come back to.</p>
+    <p>wishie is for people who love shopping online and shop in more than one store. Save a product from any shop with its link, and it joins a single list you can come back to.</p>
     <p>For every saved piece we keep the photo, the price and whether it is in stock, so you can compare what you love side by side and buy when the moment is right, not when a sale banner tells you to.</p>
     <p>We also gather promotions and coupon codes from the brands you follow, and we label advertising clearly. Your list is yours: it exists to help you choose well, not to push you to buy more.</p>
     <p><a class="textlink" href="#wishlist">Go to your wishlist</a></p>
@@ -652,15 +644,15 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h1>Terms &amp; Conditions</h1>
   <p class="updated">Last updated: 10 October 2026</p>
   <p class="draft">Draft for review. Items in [brackets] still need your details, and a lawyer should check this text before launch.</p>
-  <p>These terms are an agreement between you and [company name] (“culttt”, “we”, “us”). By using culttt you agree to them. If you do not agree, please do not use the service.</p>
-  <h2>1. What culttt does</h2>
-  <p>culttt lets you save products from different online shops in one list, see their price and availability, and find coupons and promotions. We show information about products sold by other companies. We do not sell those products and are not a party to any purchase you make from a shop.</p>
+  <p>These terms are an agreement between you and [company name] (“wishie”, “we”, “us”). By using wishie you agree to them. If you do not agree, please do not use the service.</p>
+  <h2>1. What wishie does</h2>
+  <p>wishie lets you save products from different online shops in one list, see their price and availability, and find coupons and promotions. We show information about products sold by other companies. We do not sell those products and are not a party to any purchase you make from a shop.</p>
   <h2>2. Using the service</h2>
-  <p>You may use culttt for personal, non-commercial purposes. You must be at least 16 years old, or the age of digital consent where you live. The service is currently free. If we introduce paid features, we will tell you before any charge applies.</p>
+  <p>You may use wishie for personal, non-commercial purposes. You must be at least 16 years old, or the age of digital consent where you live. The service is currently free. If we introduce paid features, we will tell you before any charge applies.</p>
   <h2>3. Accounts</h2>
   <p>Some features need an account, which you can create by signing in with Google. You are responsible for activity on your account and for keeping access to it secure. Tell us promptly if you think someone else has used it.</p>
   <h2>4. Closing your account</h2>
-  <p>You can stop using culttt and ask us to delete your account at any time. We may suspend or close an account that breaks these terms, harms other people, or puts the service at risk.</p>
+  <p>You can stop using wishie and ask us to delete your account at any time. We may suspend or close an account that breaks these terms, harms other people, or puts the service at risk.</p>
   <h2>5. Prices, availability and coupons</h2>
   <p>Prices, stock status, product details and coupon codes come from the shops themselves or from public pages, and they change often. We try to keep them current but cannot guarantee that they are accurate, complete or still valid. Always confirm the final price and terms on the shop’s own site before you buy.</p>
   <h2>6. Promotions and sponsored content</h2>
@@ -668,9 +660,9 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h2>7. Content</h2>
   <p>Product names, photos and descriptions belong to their owners and are shown to identify the products you saved. Links you add to your list remain yours. You give us permission to store and display them so the service can work.</p>
   <h2>8. What you may not do</h2>
-  <p>Do not use culttt to break the law, copy or scrape the service in bulk, interfere with how it runs, try to access another person’s account, or upload anything harmful or misleading.</p>
+  <p>Do not use wishie to break the law, copy or scrape the service in bulk, interfere with how it runs, try to access another person’s account, or upload anything harmful or misleading.</p>
   <h2>9. Intellectual property</h2>
-  <p>The culttt name, logo, design and software belong to us. These terms do not give you any rights in them beyond using the service as intended. If you send us ideas or feedback, we may use them without owing you anything.</p>
+  <p>The wishie name, logo, design and software belong to us. These terms do not give you any rights in them beyond using the service as intended. If you send us ideas or feedback, we may use them without owing you anything.</p>
   <h2>10. No warranty</h2>
   <p>The service is provided “as is” and “as available”. To the extent the law allows, we make no promises that it will be uninterrupted, error-free or fit for a particular purpose.</p>
   <h2>11. Limits on our liability</h2>
@@ -690,8 +682,8 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   </div>
   <div class="login-side">
   <div class="login-card">
-    <svg class="login-heart" width="30" height="28" viewBox="3.5 4.5 15 14" aria-hidden="true"><defs><clipPath id="heart-clip-login"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z"/></clipPath></defs><g clip-path="url(#heart-clip-login)"><rect x="3" y="3" width="16" height="17" fill="#7B2CBF"/></g></svg>
-    <h1 id="login-title">Sign in to culttt</h1>
+    <svg class="login-heart" width="30" height="28" viewBox="3.5 4.5 15 14" aria-hidden="true"><defs><clipPath id="heart-clip-login"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z"/></clipPath></defs><g clip-path="url(#heart-clip-login)"><rect x="3" y="3" width="16" height="17" fill="#CDFD02"/></g></svg>
+    <h1 id="login-title">Sign in to wishie</h1>
     <p class="login-sub" id="login-sub">Keep your wishlist on every device.</p>
     <button type="button" class="gbtn" id="g-btn">
       <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.140 4.140 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.430 0 4.467-.806 5.956-2.180l-2.908-2.259c-.806.540-1.837.860-3.048.860-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.710A5.410 5.410 0 0 1 3.682 9c0-.593.102-1.170.282-1.710V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.580c1.321 0 2.508.454 3.440 1.345l2.582-2.580C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.290C4.672 5.163 6.656 3.580 9 3.580z"/></svg>
@@ -713,7 +705,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       <button type="submit" class="btn-primary" id="e-submit">Sign in with email</button>
     </form>
     <p class="login-msg" id="login-msg" role="status"></p>
-    <p class="login-switch"><span id="switch-text">New to culttt?</span> <button type="button" class="linkbtn" id="mode-switch">Create an account</button></p>
+    <p class="login-switch"><span id="switch-text">New to wishie?</span> <button type="button" class="linkbtn" id="mode-switch">Create an account</button></p>
     <p class="login-fine">By continuing you agree to our <a href="#terms">Terms &amp; Conditions</a> and <a href="#privacy">Privacy Policy</a>.</p>
   </div>
   </div>
@@ -722,16 +714,16 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h1>Privacy Policy</h1>
   <p class="updated">Last updated: 10 October 2026</p>
   <p class="draft">Draft for review. Items in [brackets] still need your details, and a lawyer should check this text before launch.</p>
-  <p>This policy explains what information culttt handles when you use the site, why, and the choices you have.</p>
+  <p>This policy explains what information wishie handles when you use the site, why, and the choices you have.</p>
   <h2>1. Who we are</h2>
-  <p>culttt is run by [company name], [address]. We are responsible for the personal information described here. To reach us about privacy, write to [contact email].</p>
+  <p>wishie is run by [company name], [address]. We are responsible for the personal information described here. To reach us about privacy, write to [contact email].</p>
   <h2>2. The short version</h2>
-  <p>You can use culttt today without an account. Your wishlist is kept in your own browser, not on our servers. We do not use advertising trackers or analytics cookies, and we do not sell personal information.</p>
+  <p>You can use wishie today without an account. Your wishlist is kept in your own browser, not on our servers. We do not use advertising trackers or analytics cookies, and we do not sell personal information.</p>
   <h2>3. What we collect and why</h2>
   <p><strong>Your wishlist.</strong> The product links you add, and the ones you remove, are saved in your browser’s local storage on your device. We cannot see them.</p>
   <p><strong>Product links you paste.</strong> When you add a link, your browser sends that link to our lookup service so it can read the product’s name, photos, price and stock from the shop. We use the link only to answer that request and do not keep a record of it tied to you.</p>
   <p><strong>Price alerts.</strong> When you set a price alert, your browser sends the product link, your target price and a random alert number to our lookup service. We keep them until you remove the alert or the product, so we can check the price on a schedule. They are not tied to your name or email. The alerts you set are also saved in your browser’s local storage.</p>
-  <p><strong>Technical information.</strong> Like any website, the companies that host culttt receive your IP address, browser type and the time of each request, so they can deliver pages and keep the service secure.</p>
+  <p><strong>Technical information.</strong> Like any website, the companies that host wishie receive your IP address, browser type and the time of each request, so they can deliver pages and keep the service secure.</p>
   <p><strong>Messages.</strong> The Get in Touch form is not connected yet, so nothing you type there is sent or stored. When it is, we will use your name and message only to reply to you.</p>
   <p><strong>Account details, once sign-in is available.</strong> If you sign in with Google, we will receive your name, email address and profile picture from Google, and we will store your wishlist with your account so it follows you across devices. We will not receive your Google password.</p>
   <h2>4. Cookies and similar storage</h2>
@@ -739,16 +731,16 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h2>5. Who else receives information</h2>
   <p><strong>Hosting providers.</strong> GitHub hosts the website and Cloudflare runs the lookup service. Both process technical information on our behalf.</p>
   <p><strong>Google Fonts.</strong> The site loads its typefaces from Google, which receives your IP address when your browser requests them.</p>
-  <p><strong>Shops.</strong> Product photos load directly from the shops’ own servers, so a shop can see that your device requested an image. When you follow “Open at” or a coupon link, you leave culttt and the shop’s own privacy policy applies.</p>
+  <p><strong>Shops.</strong> Product photos load directly from the shops’ own servers, so a shop can see that your device requested an image. The large photo on the home page loads from Unsplash in the same way. When you follow “Open at” or a coupon link, you leave wishie and the shop’s own privacy policy applies.</p>
   <p>We do not sell your personal information or share it for advertising.</p>
   <h2>6. Ads and sponsored content</h2>
-  <p>Cards marked “Ad” or “Sponsored” are shown to everyone in the same way. They are not chosen using your personal information, and they do not track you on culttt. If you follow one, the advertiser’s site may use its own cookies.</p>
+  <p>Cards marked “Ad” or “Sponsored” are shown to everyone in the same way. They are not chosen using your personal information, and they do not track you on wishie. If you follow one, the advertiser’s site may use its own cookies.</p>
   <h2>7. How long we keep information</h2>
   <p>Your wishlist stays in your browser until you remove items or clear your browser storage. Hosting logs are kept by our providers for limited periods under their own policies. Once accounts exist, we will keep account information until you delete your account.</p>
   <h2>8. Your rights</h2>
   <p>Depending on where you live, you may have the right to ask for a copy of your personal information, to have it corrected or deleted, to object to or restrict how it is used, and to complain to your local data protection authority. Write to [contact email] and we will respond within the time the law requires.</p>
   <h2>9. Children</h2>
-  <p>culttt is not intended for children under 16, and we do not knowingly collect their personal information.</p>
+  <p>wishie is not intended for children under 16, and we do not knowingly collect their personal information.</p>
   <h2>10. Where information is processed</h2>
   <p>Our providers may process information in countries other than yours, including the United States. Where the law requires it, we rely on appropriate safeguards for those transfers.</p>
   <h2>11. Changes to this policy</h2>
@@ -758,10 +750,10 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h1>FAQs</h1>
   <p class="updated">Answers to what people ask most.</p>
   <h2>Getting started</h2>
-  <details class="qa"><summary>What is culttt?</summary><p>A single place for products you want to buy from different online shops. You save a product with its link, and it joins one list with its photo, price and stock status.</p></details>
+  <details class="qa"><summary>What is wishie?</summary><p>A single place for products you want to buy from different online shops. You save a product with its link, and it joins one list with its photo, price and stock status.</p></details>
   <details class="qa"><summary>How do I add a product?</summary><p>Open the product’s page in the shop, copy the address from your browser, paste it into the “Paste a product link” field on the Wishlist page, and press the blue plus button.</p></details>
   <details class="qa"><summary>Which shops can I save from?</summary><p>You can paste a link from any online shop. How much detail we can show depends on the shop: some share photos, price and stock automatically, and some do not.</p></details>
-  <details class="qa"><summary>Is culttt free?</summary><p>Yes. There is nothing to pay to save products or use coupons.</p></details>
+  <details class="qa"><summary>Is wishie free?</summary><p>Yes. There is nothing to pay to save products or use coupons.</p></details>
   <h2>Your list</h2>
   <details class="qa"><summary>Why was my product added without a photo or price?</summary><p>Some shops block automatic lookups of their pages. When that happens the link is still saved, and “Open at” the shop takes you to the product, but we cannot show its photo, price or stock.</p></details>
   <details class="qa"><summary>Where is my list saved? Can I see it on my phone too?</summary><p>Right now your list is saved in the browser you added it from, so it does not appear on your other devices and other people cannot see it. Signing in to keep one list everywhere is on the way.</p></details>
@@ -771,11 +763,11 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <details class="qa"><summary>How up to date are the price and stock?</summary><p>Each product shows a “Checked” date. That is the last time we read the price and stock from the shop. Prices change often, so confirm the final price on the shop’s site before you buy.</p></details>
   <details class="qa"><summary>What does “Was $99.00 (40% off)” mean?</summary><p>It is the shop’s own earlier price and the discount the shop was advertising when we last checked. We show it as the shop states it and do not verify how long that earlier price was charged.</p></details>
   <details class="qa"><summary>Will you tell me when a price drops or something is back in stock?</summary><p>For price drops, yes. On the Wishlist page, select the bell on a product (it appears when you point at the product on a computer) and enter the price you’d like to pay. We check the price about every 6 hours, and when it drops to your price or lower, it shows up in Notifications. Stock alerts are planned.</p></details>
-  <details class="qa"><summary>Can I buy products on culttt?</summary><p>No. We do not sell anything. “Open at” takes you to the shop, and you buy there under the shop’s own terms, delivery and returns.</p></details>
+  <details class="qa"><summary>Can I buy products on wishie?</summary><p>No. We do not sell anything. “Open at” takes you to the shop, and you buy there under the shop’s own terms, delivery and returns.</p></details>
   <h2>Coupons and ads</h2>
   <details class="qa"><summary>Are the coupons real?</summary><p>Not yet. The coupons shown today are samples marked “Sample offer”, with codes that start with SAMPLE. They will not work at checkout. Real offers will replace them.</p></details>
-  <details class="qa"><summary>What do “Ad”, “Sponsored” and “Exclusive” mean?</summary><p>“Ad” and “Sponsored” mark paid placements from a brand. “Exclusive” marks an offer that comes with a code for culttt users. Products you saved yourself are never ads.</p></details>
-  <details class="qa"><summary>Does culttt earn money when I buy something?</summary><p>We may earn a commission from a shop when you follow a link and buy. It does not change the price you pay.</p></details>
+  <details class="qa"><summary>What do “Ad”, “Sponsored” and “Exclusive” mean?</summary><p>“Ad” and “Sponsored” mark paid placements from a brand. “Exclusive” marks an offer that comes with a code for wishie users. Products you saved yourself are never ads.</p></details>
+  <details class="qa"><summary>Does wishie earn money when I buy something?</summary><p>We may earn a commission from a shop when you follow a link and buy. It does not change the price you pay.</p></details>
   <h2>Account and help</h2>
   <details class="qa"><summary>How do I sign in?</summary><p>Sign-in with Google is being set up and does not work yet. You can use everything on the site without an account in the meantime.</p></details>
   <details class="qa"><summary>How do I contact you?</summary><p>Use the Get in Touch page linked at the bottom of every page.</p></details>
@@ -805,9 +797,9 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   </form>
 </div>
 <footer class="foot-bar">
-  <a href="#home" class="flogo" aria-label="culttt, home">
+  <a href="#home" class="flogo" aria-label="wishie, home">
     <svg width="11" height="10" viewBox="3.5 4.5 15 14" aria-hidden="true"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z" fill="currentColor"/></svg>
-    <span>culttt</span>
+    <span>wishie</span>
   </a>
   <nav aria-label="Footer">
     <ul>
@@ -819,23 +811,9 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       <li><a href="#terms">Terms &amp; Conditions</a></li>
     </ul>
   </nav>
-  <p class="rights">© 2026 culttt. All rights reserved.</p>
+  <p class="rights">© 2026 wishie. All rights reserved.</p>
 </footer>
 <script>
-(function(){
-  var root = document.documentElement, btn = document.getElementById("theme-toggle");
-  var dark = window.matchMedia("(prefers-color-scheme: dark)");
-  function current(){ return root.getAttribute("data-theme") || (dark.matches ? "dark" : "light"); }
-  function label(){ btn.setAttribute("aria-label", current() === "dark" ? "Switch to light mode" : "Switch to dark mode"); }
-  btn.addEventListener("click", function(){
-    var next = current() === "dark" ? "light" : "dark";
-    root.setAttribute("data-theme", next);
-    try{ localStorage.setItem("wishie-theme", next); }catch(e){}
-    label();
-  });
-  if(dark.addEventListener) dark.addEventListener("change", label);
-  label();
-})();
 (function(){
   var STATUS = {
     in_stock:{label:"In stock",cls:"b-in"},
@@ -988,8 +966,70 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     pool.forEach(function(i){var k=getter(i); map[k]=(map[k]||0)+1});
     return {total:pool.length, map:map};
   }
+  // The newest saved products, shown under the home page's hero.
+  function renderRecent(){
+    var host = $("recent-grid"), list = items.slice().sort(function(a,b){
+      return String(b.addedAt||b.checkedAt||"").localeCompare(String(a.addedAt||a.checkedAt||""));
+    }).slice(0, 8);
+    $("home-recent").hidden = !list.length;
+    host.textContent = "";
+    list.forEach(function(i){ host.appendChild(productCard(i, true)); });
+  }
+  // One product card. Previews (the home page's recent items) leave out the remove button.
+  function productCard(i, preview){
+    var a = st(i), card = el("article","card" + (a==="out_of_stock"?" is-out":""));
+    var imgs = photos(i);
+    card.appendChild(imgs.length ? gallery(i, imgs) : el("div","plate", i.shop||""));
+    if(!preview){
+      var rm = el("button","rm");
+      rm.type = "button";
+      rm.setAttribute("aria-label","Remove " + (i.name||"item") + " from wishlist");
+      rm.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" fill="none"/></svg>';
+      rm.addEventListener("click", function(){removeItem(i, rm)});
+      card.appendChild(rm);
+    }
+    var al = alertOf(i), canAlert = i.id && typeof i.price === "number" && safeUrl(i.url);
+    if(canAlert){
+      var ab = el("button","alertbtn" + (al ? " on" : ""));
+      ab.type = "button";
+      ab.setAttribute("aria-haspopup","dialog");
+      if(i.id) ab.setAttribute("data-item", i.id);
+      ab.setAttribute("aria-label", (al ? "Edit price alert for " : "Add price drop alert for ") + (i.name||"item"));
+      ab.innerHTML = ICON_BELL;
+      ab.addEventListener("click", function(){ openAlert(i, ab); });
+      card.appendChild(ab);
+    }
+    var body = el("div","body");
+    var top = el("div","toprow");
+    top.appendChild(el("span","badge " + STATUS[a].cls, STATUS[a].label));
+    var d = fmtDate(i.checkedAt);
+    if(d) top.appendChild(el("span","checked","Checked " + d));
+    body.appendChild(top);
+    body.appendChild(el(preview ? "h3" : "h2","name", i.name||"Untitled item"));
+    var u = safeUrl(i.url);
+    if(u){
+      var link = el("a","open","Open at " + (i.shop||"shop"));
+      link.href = u; link.target = "_blank"; link.rel = "noopener noreferrer";
+      body.appendChild(link);
+    }
+    var isWas = /^Was\b/.test(i.note||"");
+    if(i.note && !isWas) body.appendChild(el("p","meta",i.note));
+    var foot = el("div","foot");
+    foot.appendChild(el("span","price",fmtPrice(i)));
+    if(isWas) foot.appendChild(el("span","was",i.note));
+    body.appendChild(foot);
+    if(al && canAlert){
+      var on = el("span","alerton");
+      on.innerHTML = ICON_BELL.replace(/width="16" height="16"/, 'width="12" height="12"');
+      on.appendChild(document.createTextNode("Alert at " + fmtPrice({price:al.target, currency:i.currency})));
+      body.appendChild(on);
+    }
+    card.appendChild(body);
+    return card;
+  }
   function render(){
     if(NOTIFS) renderNotifs();
+    renderRecent();
     var host = $("f-groups"), pick = function(key){ return function(v){ filter[key] = v; render(); }; };
     host.textContent = "";
     group(host, "sort", "Sort by", SORTS.map(function(o){ return {value:o[0], label:o[1]}; }), sortBy,
@@ -1044,53 +1084,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       grid.appendChild(e2); return;
     }
     shown.forEach(function(i, n){
-      var a = st(i), card = el("article","card" + (a==="out_of_stock"?" is-out":""));
-      var imgs = photos(i);
-      card.appendChild(imgs.length ? gallery(i, imgs) : el("div","plate", i.shop||""));
-      var rm = el("button","rm");
-      rm.type = "button";
-      rm.setAttribute("aria-label","Remove " + (i.name||"item") + " from wishlist");
-      rm.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" fill="none"/></svg>';
-      rm.addEventListener("click", function(){removeItem(i, rm)});
-      card.appendChild(rm);
-      var al = alertOf(i), canAlert = i.id && typeof i.price === "number" && safeUrl(i.url);
-      if(canAlert){
-        var ab = el("button","alertbtn" + (al ? " on" : ""));
-        ab.type = "button";
-        ab.setAttribute("aria-haspopup","dialog");
-        if(i.id) ab.setAttribute("data-item", i.id);
-        ab.setAttribute("aria-label", (al ? "Edit price alert for " : "Add price drop alert for ") + (i.name||"item"));
-        ab.innerHTML = ICON_BELL;
-        ab.addEventListener("click", function(){ openAlert(i, ab); });
-        card.appendChild(ab);
-      }
-      var body = el("div","body");
-      var top = el("div","toprow");
-      top.appendChild(el("span","badge " + STATUS[a].cls, STATUS[a].label));
-      var d = fmtDate(i.checkedAt);
-      if(d) top.appendChild(el("span","checked","Checked " + d));
-      body.appendChild(top);
-      body.appendChild(el("h2","name", i.name||"Untitled item"));
-      var u = safeUrl(i.url);
-      if(u){
-        var link = el("a","open","Open at " + (i.shop||"shop"));
-        link.href = u; link.target = "_blank"; link.rel = "noopener noreferrer";
-        body.appendChild(link);
-      }
-      var isWas = /^Was\b/.test(i.note||"");
-      if(i.note && !isWas) body.appendChild(el("p","meta",i.note));
-      var foot = el("div","foot");
-      foot.appendChild(el("span","price",fmtPrice(i)));
-      if(isWas) foot.appendChild(el("span","was",i.note));
-      body.appendChild(foot);
-      if(al && canAlert){
-        var on = el("span","alerton");
-        on.innerHTML = ICON_BELL.replace(/width="16" height="16"/, 'width="12" height="12"');
-        on.appendChild(document.createTextNode("Alert at " + fmtPrice({price:al.target, currency:i.currency})));
-        body.appendChild(on);
-      }
-      card.appendChild(body);
-      grid.appendChild(card);
+      grid.appendChild(productCard(i));
       if((n + 1) % 5 === 0) grid.appendChild(adCard());
     });
   }
@@ -1618,6 +1612,16 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     document.body.classList.toggle("on-login", v === "login");
     window.scrollTo(0, 0);
   }
+  // The hero field hands its link to the wishlist's add form.
+  $("hero-add").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var h = $("hero-url"), v = h.value.trim();
+    if(!v){ h.focus(); return; }
+    $("add-url").value = v; h.value = "";
+    location.hash = "#wishlist";
+    var f = $("add");
+    if(f.requestSubmit) f.requestSubmit(); else f.dispatchEvent(new Event("submit", {cancelable:true}));
+  });
   Array.prototype.forEach.call(document.querySelectorAll("a[data-soon]"), function(a){
     a.addEventListener("click", function(ev){ ev.preventDefault(); });
   });
@@ -1832,10 +1836,10 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   var signup = false;
   $("mode-switch").addEventListener("click", function(){
     signup = !signup;
-    $("login-title").textContent = signup ? "Create your account" : "Sign in to culttt";
+    $("login-title").textContent = signup ? "Create your account" : "Sign in to wishie";
     $("login-sub").textContent = signup ? "Save products from any shop and keep them in one list." : "Keep your wishlist on every device.";
     $("e-submit").textContent = signup ? "Create account" : "Sign in with email";
-    $("switch-text").textContent = signup ? "Already have an account?" : "New to culttt?";
+    $("switch-text").textContent = signup ? "Already have an account?" : "New to wishie?";
     $("mode-switch").textContent = signup ? "Sign in" : "Create an account";
     $("e-pass").setAttribute("autocomplete", signup ? "new-password" : "current-password");
     $("e-pass-hint").hidden = !signup;
