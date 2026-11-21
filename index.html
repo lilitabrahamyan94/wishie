@@ -106,8 +106,9 @@ body.alert-open .adlg{opacity:1;transform:translate(-50%,-50%)}
 .nav.prev{left:var(--space-1)}.nav.next{right:var(--space-1)}
 .gallery:hover .nav,.nav:focus-visible{opacity:1}
 .nav:disabled{opacity:0 !important;pointer-events:none}
-.count{position:absolute;right:var(--space-1);bottom:var(--space-1);font-size:12px;line-height:16px;font-weight:600;padding:var(--space-0_5) var(--space-1);
-  border-radius:99px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+.dots{position:absolute;left:0;right:0;bottom:var(--space-1);display:flex;justify-content:center;gap:var(--space-0_5);pointer-events:none}
+.dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.56);box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+.dots span.on{background:#FFFFFF}
 @media (hover:none){.nav{display:none}}
 @media (prefers-reduced-motion:reduce){.nav{transition:none}}
 .plate{aspect-ratio:4/3;background:var(--plate);display:flex;align-items:flex-end;padding:var(--space-2);
@@ -136,11 +137,25 @@ a.open{color:var(--ink);font-size:13px;font-weight:500;text-underline-offset:3px
 .add-msg{font-size:13px;min-height:20px;margin:var(--space-1) 0 var(--space-3);color:var(--muted)}
 .add-msg.err{color:var(--out)}
 #view-inspo .add-msg{margin-top:calc(-1 * var(--space-3))}
-.reason{color:var(--muted);font-size:12px;line-height:16px;margin:0}
+.info{position:absolute;left:var(--space-1);top:var(--space-1);z-index:3;width:48px;height:48px;padding:0;border:0;background:none;
+  display:grid;place-items:center;cursor:help;color:var(--ink)}
+.info span{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.info:focus-visible{outline:0}
+.info:focus-visible span{outline:2px solid var(--focus);outline-offset:2px}
+.tip{position:absolute;left:var(--space-1);top:calc(var(--space-1) + 48px);z-index:3;max-width:calc(100% - var(--space-2));padding:var(--space-1) var(--space-1_5);
+  border-radius:8px;background:#333333;color:#FFFFFF;font-size:12px;line-height:16px;opacity:0;visibility:hidden;transition:opacity .15s;pointer-events:none}
+.info:hover+.tip,.info:focus+.tip{opacity:1;visibility:visible}
+@media (prefers-reduced-motion:reduce){.tip{transition:none}}
 .savebtn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-1);min-height:48px;margin-top:var(--space-1);padding:0 var(--space-2);
-  border-radius:99px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
-.savebtn:hover{background:var(--surface);color:var(--ink)}
+  border-radius:99px;border:1px solid var(--ink);background:transparent;color:var(--ink);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.savebtn:hover{background:var(--plate)}
 .savebtn:disabled{opacity:.45;cursor:default}
+@media (hover:hover){
+  .savebtn{opacity:0;transition:opacity .15s}
+  .card:hover .savebtn,.card:focus-within .savebtn{opacity:1}
+}
+@media (prefers-reduced-motion:reduce){.savebtn{transition:none}}
+.card.slim .name{font-size:12px;line-height:16px}
 .top{position:sticky;top:var(--space-2);z-index:20;height:48px;margin:var(--space-2) var(--space-3) 0;display:flex;align-items:center;justify-content:space-between;gap:var(--space-1);
   pointer-events:none}
 .top .tl,.top .profile{height:48px;border-radius:999px;pointer-events:auto;
@@ -176,15 +191,15 @@ a.open{color:var(--ink);font-size:13px;font-weight:500;text-underline-offset:3px
 .hadd button:hover{opacity:.88}
 .banner :focus-visible{outline-color:#FFFFFF}
 .coupons{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(272px,100%),1fr));gap:var(--space-3)}
-.coupon{display:flex;min-height:176px;background:var(--surface);border:1px dashed var(--line);border-radius:8px;overflow:hidden}
+.coupon{display:flex;background:var(--surface);border:1px dashed var(--line);border-radius:8px;overflow:hidden}
 .ctab{flex:none;width:40px;display:grid;place-items:center;background:var(--ink);color:var(--paper)}
 .ctab span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
 .coupon.sponsored .ctab{background:#E3D9F5;color:#2B2140}
 .cbody{flex:1;min-width:0;display:flex;flex-direction:column;padding:var(--space-2) var(--space-2) var(--space-1)}
 .cbody h3{margin:0;font-family:"Outfit","Schibsted Grotesk",sans-serif;font-weight:400;font-size:25px;line-height:28px;letter-spacing:-0.02em}
-.coffer{margin:var(--space-1) 0 0;font-size:15px;line-height:20px}
-.cmeta{margin:var(--space-1) 0 0;color:var(--muted);font-size:13px}
-.cfoot{margin-top:auto;padding-top:var(--space-1);display:flex;align-items:center;justify-content:space-between;gap:var(--space-0_5) var(--space-2);flex-wrap:wrap}
+.coffer{margin:var(--space-0_5) 0 0;font-size:15px;line-height:20px}
+.cmeta{margin:0;color:var(--muted);font-size:13px;line-height:16px}
+.cfoot{margin-top:auto;padding-top:var(--space-0_5);display:flex;align-items:center;justify-content:space-between;gap:var(--space-0_5) var(--space-2);flex-wrap:wrap}
 .clink{display:inline-flex;align-items:center;gap:var(--space-1);min-height:48px;padding:0;border:0;background:none;cursor:pointer;
   font:inherit;font-size:14px;font-weight:700;color:var(--ink);text-decoration:underline;text-underline-offset:4px}
 .clink:hover{color:var(--accent)}
@@ -286,9 +301,8 @@ body{display:flex;flex-direction:column;min-height:100vh}
 @media (max-width:760px){.tbtn{width:40px}}
 .burger{display:none;color:#000000}
 @media (max-width:760px){
-  .top .tl{position:relative}
   .top .burger{display:grid}
-  .top .menu{display:none;position:absolute;left:0;top:calc(100% + var(--space-1));z-index:10;min-width:200px;flex-direction:column;gap:0;
+  .top .menu{display:none;position:absolute;right:0;top:calc(100% + var(--space-1));z-index:10;min-width:200px;flex-direction:column;gap:0;
     background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:var(--space-0_5);box-shadow:0 8px 24px rgba(0,0,0,.14)}
   .top .menu.open{display:flex}
   .top .menu a{padding:0 var(--space-1_5);font-size:15px;font-weight:500;color:var(--ink)}
@@ -503,9 +517,6 @@ body.on-login .top .profile,body.on-login .top .menu,body.on-login .top .burger{
       <svg width="15" height="14" viewBox="3.5 4.5 15 14" aria-hidden="true"><defs><clipPath id="heart-clip"><path d="M11 18.500S3.500 14 3.500 8.600A4 4 0 0 1 11 6.700a4 4 0 0 1 7.500 1.900C18.500 14 11 18.500 11 18.500z"/></clipPath></defs><g clip-path="url(#heart-clip)"><rect x="3" y="3" width="16" height="17" fill="#CDFD02"/></g></svg>
       <span>wishie</span>
     </a>
-    <button type="button" class="tbtn burger" id="menu-btn" aria-expanded="false" aria-controls="main-menu" aria-label="Menu">
-      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
     <div class="menu" id="main-menu">
       <a href="#home" id="nav-home">Home</a>
       <a href="#wishlist" id="nav-wishlist">Wishlist</a>
@@ -536,6 +547,9 @@ body.on-login .top .profile,body.on-login .top .menu,body.on-login .top .burger{
     <button type="button" class="tbtn bell" id="notif-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="notif-drawer" aria-label="Notifications">
       <svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 1.800a5 5 0 0 0-5 5v2.700L2.600 12.300a.7.7 0 0 0 .6 1.100h11.600a.7.7 0 0 0 .6-1.100L14 9.500V6.800a5 5 0 0 0-5-5z" fill="currentColor"/><path d="M6.900 14.600a2.100 2.100 0 0 0 4.200 0z" fill="currentColor"/></svg>
       <span class="nbadge" id="notif-count" hidden></span>
+    </button>
+    <button type="button" class="tbtn burger" id="menu-btn" aria-expanded="false" aria-controls="main-menu" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
     <div class="pop" id="profile-menu" hidden>
       <a href="#login">Sign In</a>
@@ -926,11 +940,13 @@ body.on-login .top .profile,body.on-login .top .menu,body.on-login .top .burger{
       prev.type = next.type = "button";
       prev.setAttribute("aria-label","Previous photo");
       next.setAttribute("aria-label","Next photo");
-      var count = el("span","count");
+      var dots = el("div","dots");
+      dots.setAttribute("aria-hidden","true");
+      imgs.forEach(function(){ dots.appendChild(el("span")); });
       var idx = function(){return track.clientWidth ? Math.round(track.scrollLeft/track.clientWidth) : 0};
       var sync = function(){
         var n = Math.min(imgs.length-1, Math.max(0, idx()));
-        count.textContent = (n+1) + " / " + imgs.length;
+        Array.prototype.forEach.call(dots.children, function(d, k){ d.className = k === n ? "on" : ""; });
         prev.disabled = n === 0; next.disabled = n === imgs.length-1;
       };
       var go = function(d){
@@ -939,7 +955,7 @@ body.on-login .top .profile,body.on-login .top .menu,body.on-login .top .burger{
       prev.addEventListener("click", function(){go(-1)});
       next.addEventListener("click", function(){go(1)});
       track.addEventListener("scroll", sync, {passive:true});
-      g.appendChild(prev); g.appendChild(next); g.appendChild(count);
+      g.appendChild(prev); g.appendChild(next); g.appendChild(dots);
       sync();
     }
     return g;
@@ -1026,10 +1042,12 @@ body.on-login .top .profile,body.on-login .top .menu,body.on-login .top .burger{
     }).slice(0, 8);
     $("home-recent").hidden = !list.length;
     host.textContent = "";
-    list.forEach(function(i){ host.appendChild(productCard(i, true)); });
+    list.forEach(function(i){ host.appendChild(productCard(i, true, {bare:true, slim:true})); });
   }
-  // One product card. Previews (the home page's recent items) leave out the remove button.
-  function productCard(i, preview){
+  // One product card. Previews (home page and Inspo cards) leave out the remove button.
+  // opt.bare (home page): no stock badge, checked date or price alert. opt.slim (Newly added): also no shop link or price.
+  function productCard(i, preview, opt){
+    opt = opt || {};
     var a = st(i), card = el("article","card" + (a==="out_of_stock"?" is-out":""));
     var imgs = photos(i);
     card.appendChild(imgs.length ? gallery(i, imgs) : el("div","plate", i.shop||""));
@@ -1041,7 +1059,7 @@ body.on-login .top .profile,body.on-login .top .menu,body.on-login .top .burger{
       rm.addEventListener("click", function(){removeItem(i, rm)});
       card.appendChild(rm);
     }
-    var al = alertOf(i), canAlert = i.id && !i.inspo && typeof i.price === "number" && safeUrl(i.url);
+    var al = alertOf(i), canAlert = i.id && !i.inspo && !opt.bare && typeof i.price === "number" && safeUrl(i.url);
     if(canAlert){
       var ab = el("button","alertbtn" + (al ? " on" : ""));
       ab.type = "button";
@@ -1053,12 +1071,15 @@ body.on-login .top .profile,body.on-login .top .menu,body.on-login .top .burger{
       card.appendChild(ab);
     }
     var body = el("div","body");
-    var top = el("div","toprow");
-    top.appendChild(el("span","badge " + STATUS[a].cls, STATUS[a].label));
-    var d = fmtDate(i.checkedAt);
-    if(d) top.appendChild(el("span","checked","Checked " + d));
-    body.appendChild(top);
+    if(!opt.bare){
+      var top = el("div","toprow");
+      top.appendChild(el("span","badge " + STATUS[a].cls, STATUS[a].label));
+      var d = fmtDate(i.checkedAt);
+      if(d) top.appendChild(el("span","checked","Checked " + d));
+      body.appendChild(top);
+    }
     body.appendChild(el(preview ? "h3" : "h2","name", i.name||"Untitled item"));
+    if(opt.slim){ card.classList.add("slim"); card.appendChild(body); return card; }
     var u = safeUrl(i.url);
     if(u){
       var link = el("a","open","Open at " + (i.shop||"shop"));
@@ -1721,10 +1742,17 @@ body.on-login .top .profile,body.on-login .top .menu,body.on-login .top .burger{
   }
   // The Inspo page shows every pick; the home page shows the top 8 (two rows of four) with a link to the page.
   var INSPO_HOSTS = [{grid:"inspo-grid", msg:"inspo-msg", title:"inspo-title", max:Infinity},
-    {grid:"home-inspo-grid", msg:"home-inspo-msg", title:"home-inspo-title", max:8}];
+    {grid:"home-inspo-grid", msg:"home-inspo-msg", title:"home-inspo-title", max:8, bare:true}];
   function inspoCard(r, h){
-    var p = r.p, card = productCard(p, true), body = card.querySelector(".body");
-    body.insertBefore(el("p","reason", r.because ? "Because you saved " + (r.because.name || "an item") : "Popular pick"), body.firstChild.nextSibling);
+    var p = r.p, card = productCard(p, true, {bare:h.bare}), body = card.querySelector(".body");
+    // Info icon on the photo's top-left corner; the reason shows in a tooltip on hover or focus.
+    var tipId = "tip-" + h.grid + "-" + p.id, info = el("button","info"), tip = el("span","tip",
+      r.because ? "Because you saved " + (r.because.name || "an item") : "Popular pick");
+    info.type = "button"; tip.id = tipId; tip.setAttribute("role","tooltip");
+    info.setAttribute("aria-label","Why this pick"); info.setAttribute("aria-describedby", tipId);
+    info.innerHTML = '<span><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.25v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="4.9" r=".9" fill="currentColor"/></svg></span>';
+    info.addEventListener("keydown", function(ev){ if(ev.key === "Escape") info.blur(); });
+    card.insertBefore(tip, body); card.insertBefore(info, tip);
     var b = el("button","savebtn");
     b.type = "button"; b.setAttribute("data-inspo", p.id);
     b.setAttribute("aria-label","Save " + p.name + " to wishlist");
@@ -1873,6 +1901,15 @@ body.on-login .top .profile,body.on-login .top .menu,body.on-login .top .burger{
   });
   // Mobile burger: below 760px the main links live in a dropdown under the logo pill.
   var mbtn = $("menu-btn"), mmenu = $("main-menu");
+  // The pills' backdrop-filter makes each one the dropdown's containing block, so on mobile the links
+  // move into the right pill (where the burger is) and back into the left pill on desktop.
+  var narrow = window.matchMedia("(max-width:760px)");
+  function placeMenu(){
+    if(narrow.matches) document.querySelector(".top .profile").appendChild(mmenu);
+    else document.querySelector(".top .tl").appendChild(mmenu);
+  }
+  placeMenu();
+  if(narrow.addEventListener) narrow.addEventListener("change", placeMenu); else narrow.addListener(placeMenu);
   function setNav(open){ mmenu.classList.toggle("open", open); mbtn.setAttribute("aria-expanded", String(open)); }
   mbtn.addEventListener("click", function(){
     var open = !mmenu.classList.contains("open");
