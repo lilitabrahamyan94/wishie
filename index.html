@@ -135,6 +135,12 @@ a.open{color:var(--ink);font-size:13px;font-weight:500;text-underline-offset:3px
 .add button:disabled{opacity:.5;cursor:default}
 .add-msg{font-size:13px;min-height:20px;margin:var(--space-1) 0 var(--space-3);color:var(--muted)}
 .add-msg.err{color:var(--out)}
+#view-inspo .add-msg{margin-top:calc(-1 * var(--space-3))}
+.reason{color:var(--muted);font-size:12px;line-height:16px;margin:0}
+.savebtn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-1);min-height:48px;margin-top:var(--space-1);padding:0 var(--space-2);
+  border-radius:99px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.savebtn:hover{background:var(--surface);color:var(--ink)}
+.savebtn:disabled{opacity:.45;cursor:default}
 .top{position:sticky;top:var(--space-2);z-index:20;height:48px;margin:var(--space-2) var(--space-3) 0;display:flex;align-items:center;justify-content:space-between;gap:var(--space-1);
   pointer-events:none}
 .top .tl,.top .profile{height:48px;border-radius:999px;pointer-events:auto;
@@ -232,12 +238,6 @@ a.open{color:var(--ink);font-size:13px;font-weight:500;text-underline-offset:3px
 .head .summary{grid-area:sum;margin-top:var(--space-1)}
 .head .add{max-width:none}
 .head .add-msg{margin:var(--space-1) 0 0}
-.bm{display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-1)}
-.bm p{margin:0;color:var(--muted);font-size:13px;line-height:16px}
-.bmlink{flex:none;display:inline-flex;align-items:center;gap:var(--space-1);height:48px;padding:0 var(--space-2);border-radius:999px;
-  background:var(--brand);color:#000000;font-weight:600;font-size:14px;text-decoration:none;cursor:grab}
-.bmlink:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-@media (hover:none){.bm{display:none}}
 @media (max-width:760px){
   .head{grid-template-columns:minmax(0,1fr);grid-template-areas:"title" "add" "sum"}
 }
@@ -272,7 +272,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
   color:var(--muted);cursor:pointer}
 .tbtn:hover{color:var(--ink);background:var(--plate)}
 @media (max-width:760px){.tbtn{width:40px}}
-@media (max-width:400px){.top .menu a{padding:0 var(--space-0_5)}.top a.logo span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media (max-width:400px){.top .menu a{padding:0 var(--space-0_5)}.top .menu #nav-home{display:none}.top a.logo span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
 .bell{position:relative}
 .bell[aria-expanded="true"]{color:var(--ink);background:var(--plate)}
 .nbadge{position:absolute;top:var(--space-1);left:calc(50% + var(--space-0_5));min-width:16px;height:16px;padding:0 var(--space-0_5);border-radius:99px;
@@ -484,6 +484,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     <div class="menu">
       <a href="#home" id="nav-home">Home</a>
       <a href="#wishlist" id="nav-wishlist">Wishlist</a>
+      <a href="#inspo" id="nav-inspo">Inspo</a>
       <a href="#coupons" id="nav-coupons">Coupons</a>
     </div>
   </div>
@@ -613,10 +614,6 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     </button>
   </form>
   <p class="add-msg" id="add-msg" role="status"></p>
-  <div class="bm">
-    <a class="bmlink" id="bm-link" href="#" draggable="true"><svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 3v12M3 9h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>Add to wishie</a>
-    <p>No photo or price? Drag this button to your bookmarks bar, then click it on any product page.</p>
-  </div>
     </div>
     <p class="summary" id="summary">Loading your list…</p>
   </div>
@@ -636,6 +633,15 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       <div class="grid" id="grid"></div>
     </main>
   </div>
+</div>
+<div class="wrap" id="view-inspo" hidden>
+  <header>
+    <h1 id="inspo-title" tabindex="-1">Inspo feed</h1>
+    <p class="summary" id="inspo-summary"></p>
+  </header>
+  <p class="add-msg" id="inspo-msg" role="status"></p>
+  <div class="grid" id="inspo-grid"></div>
+  <p class="note">Sample products for testing, picked to match your wishlist. Photos from Unsplash.</p>
 </div>
 <div class="wrap" id="view-profile" hidden>
   <header><h1>Profile</h1></header>
@@ -736,7 +742,6 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <h2>3. What we collect and why</h2>
   <p><strong>Your wishlist.</strong> The product links you add, and the ones you remove, are saved in your browser’s local storage on your device. We cannot see them.</p>
   <p><strong>Product links you paste.</strong> When you add a link, your browser sends that link to our lookup service so it can read the product’s name, photos, price and stock from the shop. We use the link only to answer that request and do not keep a record of it tied to you.</p>
-  <p><strong>The Add to wishie button.</strong> If you add the button to your bookmarks and click it on a shop’s product page, it reads that product’s name, photos, price and stock from the page you are viewing, in your own browser, and opens wishie with those details in the page address. They are saved in your browser like any other item and are not sent to our lookup service. The button reads nothing else from the shop page and runs only when you click it.</p>
   <p><strong>Price alerts.</strong> When you set a price alert, your browser sends the product link, your target price and a random alert number to our lookup service. We keep them until you remove the alert or the product, so we can check the price on a schedule. They are not tied to your name or email. The alerts you set are also saved in your browser’s local storage.</p>
   <p><strong>Technical information.</strong> Like any website, the companies that host wishie receive your IP address, browser type and the time of each request, so they can deliver pages and keep the service secure.</p>
   <p><strong>Messages.</strong> The Get in Touch form is not connected yet, so nothing you type there is sent or stored. When it is, we will use your name and message only to reply to you.</p>
@@ -770,8 +775,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <details class="qa"><summary>Which shops can I save from?</summary><p>You can paste a link from any online shop. How much detail we can show depends on the shop: some share photos, price and stock automatically, and some do not.</p></details>
   <details class="qa"><summary>Is wishie free?</summary><p>Yes. There is nothing to pay to save products or use coupons.</p></details>
   <h2>Your list</h2>
-  <details class="qa"><summary>Why was my product added without a photo or price?</summary><p>Some shops block automatic lookups of their pages. When that happens the link is still saved, and “Open at” the shop takes you to the product, but we cannot read its photo, price or stock. Use the Add to wishie button to fill them in (see the next question).</p></details>
-  <details class="qa"><summary>How do I use the Add to wishie button?</summary><p>On a computer, open the Wishlist page and drag the lime “Add to wishie” button to your browser’s bookmarks bar. Then open a product page at any shop and click that bookmark. wishie opens with the product’s photo, price and stock. If the product is already on your list, its details are updated. The button reads the page you are looking at, so it works even on shops that block automatic lookups. It doesn’t work on phones yet. Price alerts for products from those shops still can’t be checked automatically.</p></details>
+  <details class="qa"><summary>Why was my product added without a photo or price?</summary><p>Some shops block automatic lookups of their pages. When that happens the link is still saved, and “Open at” the shop takes you to the product, but we cannot show its photo, price or stock.</p></details>
   <details class="qa"><summary>Where is my list saved? Can I see it on my phone too?</summary><p>Right now your list is saved in the browser you added it from, so it does not appear on your other devices and other people cannot see it. Signing in to keep one list everywhere is on the way.</p></details>
   <details class="qa"><summary>I removed a product by mistake. Can I get it back?</summary><p>Yes, if you are quick: an “Undo” link appears next to the link field right after you remove something. After that, add the product again with its link.</p></details>
   <details class="qa"><summary>How do the filters work?</summary><p>Each filter group lets you pick one option. Choosing a shop, a category, a price range and availability together narrows the list to products that match all of them. Pick the first option in a group to switch that filter off.</p></details>
@@ -779,6 +783,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   <details class="qa"><summary>How up to date are the price and stock?</summary><p>Each product shows a “Checked” date. That is the last time we read the price and stock from the shop. Prices change often, so confirm the final price on the shop’s site before you buy.</p></details>
   <details class="qa"><summary>What does “Was $99.00 (40% off)” mean?</summary><p>It is the shop’s own earlier price and the discount the shop was advertising when we last checked. We show it as the shop states it and do not verify how long that earlier price was charged.</p></details>
   <details class="qa"><summary>Will you tell me when a price drops or something is back in stock?</summary><p>For price drops, yes. On the Wishlist page, select the bell on a product (it appears when you point at the product on a computer) and enter the price you’d like to pay. We check the price about every 6 hours, and when it drops to your price or lower, it shows up in Notifications. Stock alerts are planned.</p></details>
+  <details class="qa"><summary>What is the Inspo feed?</summary><p>Products picked to go with what you saved, matched on category, shop, color and price. The matching happens in your browser, so your list is not sent anywhere for it. Select “Save” on a product to add it to your wishlist. The products shown today are samples for testing.</p></details>
   <details class="qa"><summary>Can I buy products on wishie?</summary><p>No. We do not sell anything. “Open at” takes you to the shop, and you buy there under the shop’s own terms, delivery and returns.</p></details>
   <h2>Coupons and ads</h2>
   <details class="qa"><summary>Are the coupons real?</summary><p>Not yet. The coupons shown today are samples marked “Sample offer”, with codes that start with SAMPLE. They will not work at checkout. Real offers will replace them.</p></details>
@@ -1004,7 +1009,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       rm.addEventListener("click", function(){removeItem(i, rm)});
       card.appendChild(rm);
     }
-    var al = alertOf(i), canAlert = i.id && typeof i.price === "number" && safeUrl(i.url);
+    var al = alertOf(i), canAlert = i.id && !i.inspo && typeof i.price === "number" && safeUrl(i.url);
     if(canAlert){
       var ab = el("button","alertbtn" + (al ? " on" : ""));
       ab.type = "button";
@@ -1046,6 +1051,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   function render(){
     if(NOTIFS) renderNotifs();
     renderRecent();
+    renderInspo();
     var host = $("f-groups"), pick = function(key){ return function(v){ filter[key] = v; render(); }; };
     host.textContent = "";
     group(host, "sort", "Sort by", SORTS.map(function(o){ return {value:o[0], label:o[1]}; }), sortBy,
@@ -1115,133 +1121,6 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       .then(function(r){ return r.json(); })
       .catch(function(){ return null; })
       .then(function(d){ clearTimeout(t); return d; });
-  }
-  // Fills in wishie's fields from a /product result or the "Add to wishie" bookmark.
-  function itemFromProduct(pr, base){
-    var item = Object.assign({}, base, {shop: pr.shop || base.shop, name: pr.name || base.name,
-      availability: STATUS[pr.availability] ? pr.availability : "unknown"});
-    ["category","color","currency","checkedAt"].forEach(function(k){ if(typeof pr[k] === "string" && pr[k]) item[k] = pr[k]; });
-    if(typeof pr.price === "number") item.price = pr.price;
-    if(Array.isArray(pr.images) && pr.images.length) item.images = pr.images.slice(0, 8);
-    return item;
-  }
-
-  // "Add to wishie" bookmark. Runs on the shop's product page in the visitor's own browser
-  // (shops that block our backend don't block that), reads the product's structured data
-  // and opens wishie at #add=<json>. Self-contained: it is turned into a javascript: link.
-  function bookmarklet(home){
-    var d = document, nodes = [], out = {url: location.href, page: location.href};
-    function walk(n){
-      if(!n || typeof n !== "object") return;
-      if(Array.isArray(n)){ n.forEach(walk); return; }
-      nodes.push(n);
-      if(n["@graph"]) walk(n["@graph"]);
-    }
-    [].forEach.call(d.querySelectorAll('script[type="application/ld+json"]'), function(s){ try{ walk(JSON.parse(s.textContent)); }catch(e){} });
-    function is(n, t){ return [].concat(n["@type"]).indexOf(t) >= 0; }
-    function meta(k){ var m = d.querySelector('meta[property="' + k + '"],meta[name="' + k + '"]'); return m ? m.getAttribute("content") || "" : ""; }
-    function txt(v){ return typeof v === "string" ? v : v && typeof v.name === "string" ? v.name : ""; }
-    function abs(u){ try{ return new URL(u, location.href).href; }catch(e){ return ""; } }
-    var p = nodes.filter(function(n){ return is(n, "Product") || is(n, "ProductGroup"); })[0];
-    var v = p && p.hasVariant ? [].concat(p.hasVariant)[0] : null;
-    if(!v || typeof v !== "object") v = {};
-    var c = d.querySelector('link[rel="canonical"]');
-    if(c && /^https:/.test(abs(c.getAttribute("href")))) out.url = abs(c.getAttribute("href"));
-    out.name = txt(p && p.name) || meta("og:title") || d.title;
-    out.shop = txt(p && p.brand) || meta("og:site_name");
-    out.category = txt(p && p.category); out.color = txt(p && p.color) || txt(v.color);
-    var imgs = [];
-    function img(x){
-      if(!x) return;
-      if(Array.isArray(x)){ x.forEach(img); return; }
-      var s = abs(typeof x === "string" ? x : x.url || x.contentUrl || "");
-      if(/^https:/.test(s) && imgs.indexOf(s) < 0) imgs.push(s);
-    }
-    img(p && p.image); img(v.image); img(meta("og:image"));
-    out.images = imgs.slice(0, 8);
-    var o = [].concat((p && p.offers) || v.offers || [])[0];
-    if(o && o.offers && o.price == null) o = [].concat(o.offers)[0] || o;
-    if(o){
-      out.price = o.price != null ? o.price : o.lowPrice != null ? o.lowPrice : o.priceSpecification && o.priceSpecification.price;
-      out.currency = o.priceCurrency || o.priceSpecification && o.priceSpecification.priceCurrency;
-      out.availability = o.availability;
-    }
-    if(out.price == null) out.price = meta("product:price:amount") || meta("og:price:amount");
-    if(!out.currency) out.currency = meta("product:price:currency") || meta("og:price:currency");
-    if(!out.availability) out.availability = meta("product:availability") || meta("og:availability");
-    if(!p && !out.price){ alert("wishie couldn't find a product on this page. Open the product's own page and try again."); return; }
-    var u = home + "#add=" + encodeURIComponent(JSON.stringify(out));
-    if(!window.open(u, "_blank")) location.href = u;
-  }
-  var bmLink = $("bm-link");
-  bmLink.href = "javascript:" + encodeURIComponent("(" + bookmarklet + ")(" + JSON.stringify(location.origin + location.pathname) + ")");
-  bmLink.addEventListener("click", function(ev){ ev.preventDefault(); say("Drag the Add to wishie button to your bookmarks bar, then click it on a product page."); });
-
-  // Product data arriving from the bookmark at #add=. Untrusted: every field is checked here.
-  var pending = null;
-  function cut(v, n){ return typeof v === "string" ? v.replace(/\s+/g," ").trim().slice(0, n) : ""; }
-  function toNum(v){
-    if(typeof v === "number") return isFinite(v) && v >= 0 ? v : null;
-    var n = parseFloat(String(v == null ? "" : v).slice(0, 40).replace(/[^\d.,-]/g,"").replace(/,(?=\d{3}\b)/g,"").replace(",","."));
-    return isFinite(n) && n >= 0 ? n : null;
-  }
-  function availOf(v){
-    var s = String(v || "").toLowerCase().replace(/^https?:\/\/schema\.org\//,"").replace(/[\s_-]/g,"");
-    return /^(instock|instoreonly|onlineonly|available|preorder|presale|backorder)/.test(s) ? "in_stock"
-      : /^(limitedavailability|lowstock)/.test(s) ? "low_stock"
-      : /^(outofstock|soldout|discontinued|oos|unavailable)/.test(s) ? "out_of_stock" : "unknown";
-  }
-  function readIncoming(){
-    var h = location.hash || "";
-    if(h.indexOf("#add=") !== 0) return;
-    var d = null;
-    try{ d = JSON.parse(decodeURIComponent(h.slice(5))); }catch(e){}
-    try{ history.replaceState(null, "", location.pathname + location.search + "#wishlist"); }catch(e){ location.hash = "#wishlist"; }
-    pending = d && typeof d === "object" && !Array.isArray(d) ? d : {};
-  }
-  function applyIncoming(){
-    if(!pending || (!store && !local) || saving) return;
-    var d = pending; pending = null;
-    var x = null;
-    try{ x = new URL(safeUrl(cut(d.url, 2048)) || ""); }catch(e){}
-    if(!x || x.hostname.indexOf(".") < 0){ say("That page couldn't be read. Paste its link into the field instead.", true); return; }
-    var page = null;
-    try{ page = new URL(safeUrl(cut(d.page, 2048)) || ""); }catch(e){}
-    var name = cut(d.name, 200), cur = cut(d.currency, 3).toUpperCase(), now = new Date().toISOString();
-    var pr = {name: name, shop: cut(d.shop, 80), category: cut(d.category, 60), color: cut(d.color, 60),
-      currency: /^[A-Z]{3}$/.test(cur) ? cur : "", price: toNum(d.price), availability: availOf(d.availability), checkedAt: now,
-      images: (Array.isArray(d.images) ? d.images : []).map(function(s){ return safeUrl(cut(s, 2048)); })
-        .filter(Boolean).slice(0, 8).map(function(s){ return {src: s, alt: name || "Product photo"}; })};
-    if(pr.price == null) delete pr.price;
-    var keys = [keyOf(x.href)].concat(page ? [keyOf(page.href)] : []);
-    var old = items.filter(function(i){ return i.url && keys.indexOf(keyOf(i.url)) >= 0; })[0];
-    var shop = shopOf(x.hostname), done = function(item, updated){
-      say((updated ? "Updated " : "Added ") + item.name + " with details from " + item.shop + "."
-        + (local ? " It is saved in this browser only." : ""));
-    };
-    if(local){
-      var mine = readLocal(), item;
-      if(old && /^local-/.test(old.id)){
-        item = itemFromProduct(pr, old);
-        mine = mine.map(function(i){ return i.id === old.id ? item : i; });
-      } else {
-        // New link, or a sample item: save a copy of it in this browser with the new details.
-        item = itemFromProduct(pr, old ? Object.assign({}, old, {id: "local-" + Date.now(), note: "Saved in this browser only"})
-          : {id: "local-" + Date.now(), url: x.href, shop: shop, name: nameOf(x, shop), note: "Saved in this browser only", addedAt: now});
-        if(old){ getGone().push(old.id); saveGone(); }
-        mine.push(item);
-      }
-      writeLocal(mine); goLocal(); done(item, !!old);
-      return;
-    }
-    saving = true; $("add-btn").disabled = true; say("Adding…");
-    var data = itemFromProduct(pr, old || {url: x.href, shop: shop, name: nameOf(x, shop), addedAt: now});
-    data.note = "Details read from the shop page"; delete data.id;
-    (old ? store.doc("items/" + old.id).set(data) : store.collection("items").add(data)).then(function(){
-      done(data, !!old);
-    }, function(){
-      say("The product wasn't saved. Try the button again in a moment.", true);
-    }).then(function(){ saving = false; $("add-btn").disabled = false; });
   }
 
   // Price drop alerts. Kept in this browser as {itemId: {id, target, seenHit}};
@@ -1711,11 +1590,16 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
       saving = true; $("add-btn").disabled = true; say("Looking up the product\u2026");
       lookup(x.href).then(function(d){
         if(d && d.ok && d.product){
-          var item = itemFromProduct(d.product, basic);
+          var pr = d.product, item = {id:basic.id, url:x.href, addedAt:now, note:basic.note,
+            shop: pr.shop || shop, name: pr.name || basic.name,
+            availability: STATUS[pr.availability] ? pr.availability : "unknown"};
+          ["category","color","currency","checkedAt"].forEach(function(k){ if(typeof pr[k] === "string") item[k] = pr[k]; });
+          if(typeof pr.price === "number") item.price = pr.price;
+          if(Array.isArray(pr.images)) item.images = pr.images.slice(0, 8);
           keep(item, "Added with details from " + item.shop + ". It is saved in this browser only.");
         } else {
           var why = d && d.error;
-          keep(basic, why === "blocked" ? "Added, but this shop blocks automatic lookups. Open the product page and click Add to wishie to get its photo and price."
+          keep(basic, why === "blocked" ? "Added, but this shop doesn't allow automatic lookups, so there are no photos or price."
             : why === "no_product" ? "Added, but no product details were found at that link."
             : "Added without details. The lookup didn't work this time.");
         }
@@ -1736,7 +1620,7 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     }).then(function(){ saving = false; $("add-btn").disabled = false; });
   });
 
-  var VIEWS = ["home","wishlist","coupons","profile","about","terms","login","faq","contact","privacy"];
+  var VIEWS = ["home","wishlist","inspo","coupons","profile","about","terms","login","faq","contact","privacy"];
   function show(){
     var v = (location.hash || "").slice(1);
     if(VIEWS.indexOf(v) < 0) v = "home";
@@ -1763,6 +1647,94 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
   Array.prototype.forEach.call(document.querySelectorAll("a[data-soon]"), function(a){
     a.addEventListener("click", function(ev){ ev.preventDefault(); });
   });
+  // Sample products for the Inspo feed, ranked against the wishlist by inspoList().
+  var UNSPLASH = "https://images.unsplash.com/photo-";
+  function insp(id, name, shop, cat, color, price, url, photo, alt){
+    return {id:"inspo-" + id, inspo:true, name:name, shop:shop, category:cat, color:color, price:price, currency:"USD",
+      availability:"in_stock", note:"Sample product", url:url,
+      images:[{src:UNSPLASH + photo + "?auto=format&fit=crop&w=900&q=70", alt:alt}]};
+  }
+  var INSPO = [
+    insp("knit-poncho","Open Knit Fringe Poncho","COS","Tops","Cream",89,"https://www.cos.com/","1434389677669-e08b4cac3105","Cream open-knit poncho with fringed hem on a wooden hanger"),
+    insp("rib-sweater","Chunky Rib Crew Sweater","COS","Tops","Grey",79,"https://www.cos.com/","1556905055-8f358a7a47b2","Grey ribbed sweater laid flat with light jeans and an orange beanie"),
+    insp("chevron-sweater","Chevron Stripe Sweater","Gap","Tops","Brown / White",64.95,"https://www.gap.com/","1475180098004-ca77a66827be","Woman by a lake in a brown and white chevron sweater and white shorts"),
+    insp("crew-tee","Essential Cotton Crew Tee","Calvin Klein","Tops","White",29.5,"https://www.calvinklein.us/","1521572163474-6864f9cf17ab","Plain white crew-neck T-shirt, front view"),
+    insp("tie-blouse","Tie Neck Silky Blouse","Calvin Klein","Tops","White",69.5,"https://www.calvinklein.us/","1608234807905-4466023792f5","White long-sleeve blouse with a black neck tie, worn with a black skirt"),
+    insp("pull-on-joggers","Satin Pull-On Joggers","COS","Bottoms","Pink",69,"https://www.cos.com/","1594633312681-425c7b97ccd1","Pale pink satin joggers with cuffed ankles"),
+    insp("fleece-set","Fleece Sweatpants","Gap","Bottoms","Yellow",49.95,"https://www.gap.com/","1515886657613-9f3515b0c78f","Woman in a yellow cropped hoodie and matching sweatpants on a basketball court"),
+    insp("skinny-jean","High Rise Skinny Jean","Gap","Denim","Light Wash",69.95,"https://www.gap.com/","1584370848010-d7fe6bc767ec","Light-wash skinny jeans worn with gold flats"),
+    insp("straight-jean","90s Straight Jean","Calvin Klein","Denim","Dark Wash",89.5,"https://www.calvinklein.us/","1604176354204-9268737828e4","Stack of folded jeans from light blue to black"),
+    insp("biker-jacket","Leather Biker Jacket","COS","Coats","Black",390,"https://www.cos.com/","1551028719-00167b16eac5","Black leather biker jacket on a hanger, laid on white sheets"),
+    insp("worn-biker","Faux Leather Moto Jacket","Calvin Klein","Coats","Black",159.5,"https://www.calvinklein.us/","1520975954732-35dd22299614","Man in sunglasses wearing a black leather jacket by a brick wall"),
+    insp("bomber","Lightweight Bomber Jacket","COS","Coats","Rust",135,"https://www.cos.com/","1591047139829-d91aecb6caea","Rust-colored bomber jacket on a hanger"),
+    insp("wool-coat","Belted Wool Overcoat","Gap","Coats","Light Blue",168,"https://www.gap.com/","1539109136881-3be0616acf4b","Woman in a long light blue wool coat with a grey scarf in a city square")
+  ];
+  function words(s){ return String(s||"").toLowerCase().split(/[^a-z]+/).filter(function(w){ return w.length > 2; }); }
+  // Catalog items not saved yet (savedFrom marks a saved one; urls are shared shop home pages), best matches first,
+  // each with the saved item it matches best.
+  function inspoList(){
+    var from = {}, prices = items.filter(function(i){ return typeof i.price === "number"; }).map(function(i){ return i.price; });
+    items.forEach(function(i){ if(i.savedFrom) from[i.savedFrom] = 1; });
+    var lo = prices.length ? Math.min.apply(null, prices) * .75 : 0, hi = prices.length ? Math.max.apply(null, prices) * 1.25 : 0;
+    return INSPO.filter(function(p){ return !from[p.id]; }).map(function(p){
+      var best = null, top = 0, cw = words(p.color);
+      items.forEach(function(i){
+        var s = (i.category && i.category === p.category ? 3 : 0) + (i.shop && i.shop === p.shop ? 2 : 0)
+          + (words(i.color).some(function(w){ return cw.indexOf(w) >= 0; }) ? 1 : 0);
+        if(s > top){ top = s; best = i; }
+      });
+      if(prices.length && p.price >= lo && p.price <= hi) top += 1;
+      return {p:p, score:top, because:best};
+    }).sort(function(a,b){ return (b.score - a.score) || a.p.name.localeCompare(b.p.name); });
+  }
+  function renderInspo(){
+    var host = $("inspo-grid"), list = inspoList(), n = items.length;
+    $("inspo-summary").textContent = n ? list.length + " picks based on your " + n + " saved product" + (n === 1 ? "" : "s")
+      : "Save a few products to tailor this feed.";
+    host.textContent = "";
+    list.forEach(function(r){
+      var p = r.p, card = productCard(p, true), body = card.querySelector(".body");
+      body.insertBefore(el("p","reason", r.because ? "Because you saved " + (r.because.name || "an item") : "Popular pick"), body.firstChild.nextSibling);
+      var b = el("button","savebtn");
+      b.type = "button"; b.setAttribute("data-inspo", p.id);
+      b.setAttribute("aria-label","Save " + p.name + " to wishlist");
+      b.innerHTML = '<svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 3v12M3 9h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+      b.appendChild(el("span",null,"Save"));
+      b.addEventListener("click", function(){ saveInspo(p, b); });
+      body.appendChild(b);
+      host.appendChild(card);
+    });
+  }
+  function inspoSay(text, err){ var m = $("inspo-msg"); m.textContent = text; m.className = "add-msg" + (err ? " err" : ""); }
+  // After a save the card leaves the feed, so focus moves to the first remaining save button (or the heading).
+  function inspoFocus(id){
+    var next = Array.prototype.filter.call(document.querySelectorAll("#inspo-grid .savebtn"), function(b){
+      return b.getAttribute("data-inspo") !== id; })[0];
+    (next || $("inspo-title")).focus();
+  }
+  function saveInspo(p, btn){
+    if(!store && !local){ inspoSay("The list isn't connected yet. Reload the page and try again.", true); return; }
+    var data = {savedFrom:p.id, addedAt:new Date().toISOString()};
+    ["name","shop","category","color","price","currency","availability","url"].forEach(function(k){ data[k] = p[k]; });
+    data.images = p.images.slice();
+    if(local){
+      data.id = "local-" + Date.now(); data.note = "Saved in this browser only";
+      var mine = readLocal(); mine.push(data); writeLocal(mine); goLocal();
+      inspoSay("Saved " + p.name + " to your wishlist."); inspoFocus(p.id);
+      return;
+    }
+    btn.disabled = true;
+    data.note = "Sample product";
+    store.collection("items").add(data).then(function(){
+      inspoSay("Saved " + p.name + " to your wishlist."); inspoFocus(p.id);
+    }, function(err){
+      btn.disabled = false;
+      var c = err && err.code;
+      inspoSay(c === "invalid_argument" ? "You don't have permission to add products to this list."
+        : c === "quota_exceeded" ? "The list is full. Remove an item, then try again."
+        : "The product wasn't saved. Try again in a moment.", true);
+    });
+  }
   // Sample coupons. tag: "Exclusive" cards have a code; "Sponsored" cards only link to the store.
   var COUPONS = [
     {brand:"Calvin Klein", offer:"20% off denim", cat:"Fashion", tag:"Exclusive", code:"SAMPLE-CK20", url:"https://www.calvinklein.us/"},
@@ -1999,9 +1971,8 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
     if(first){ $("login-msg").textContent = ""; first.focus(); return; }
     $("login-msg").textContent = signup ? "Email sign-up isn\u2019t connected yet, so no account was created." : "Email sign-in isn\u2019t connected yet.";
   });
-  function onHash(){ readIncoming(); show(); applyIncoming(); }
-  window.addEventListener("hashchange", onHash);
-  onHash();
+  window.addEventListener("hashchange", show);
+  show();
   render();
   var order = {in_stock:0, low_stock:1, unknown:2, out_of_stock:3};
   if(window.claude && typeof window.claude.use === "function"){
@@ -2014,10 +1985,10 @@ body.on-login .top .profile,body.on-login .top .menu{display:none}
         }).sort(function(a,b){
           return (order[st(a)]-order[st(b)]) || String(a.name||"").localeCompare(String(b.name||""));
         });
-        loaded = true; failed = false; render(); applyIncoming();
+        loaded = true; failed = false; render();
       }, function(){ failed = true; render(); });
     });
-  } else { goLocal(); applyIncoming(); }
+  } else { goLocal(); }
 })();
 </script>
 </body>
